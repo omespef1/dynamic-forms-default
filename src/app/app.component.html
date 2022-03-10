@@ -1,0 +1,13 @@
+<app-loader *ngIf="showLoader"></app-loader>
+
+<div class="main-container" id="mainContainer">
+    <router-outlet></router-outlet>
+</div>
+
+<dx-popup class="popup" [minHeight]="300" [maxWidth]="500" [minWidth]="500" width="auto" height="auto" [showTitle]="true" title="Información" [dragEnabled]="false" [closeOnOutsideClick]="true" [(visible)]="showPopup">
+    <div *dxTemplate="let data of 'content'">
+        <div class="h-100" style="max-height: 700px; overflow: auto">
+            {{ notificationText}}
+        </div>
+    </div>
+</dx-popup>

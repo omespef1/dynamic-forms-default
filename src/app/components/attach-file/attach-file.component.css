@@ -1,0 +1,17 @@
+::ng-deep .first-group,
+::ng-deep .second-group {
+    padding: 20px;
+}
+
+::ng-deep .second-group {
+    background-color: rgba(191, 191, 191, 0.15);
+}
+
+::ng-deep .dx-field-item-label {  
+    padding-top: 1px;  
+    padding-bottom: 1px;  
+}  
+::ng-deep .dx-field-item {  
+    padding-top: 1px;  
+    padding-bottom: 1px;  
+}

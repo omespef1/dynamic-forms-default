@@ -1,0 +1,149 @@
+<dx-popup [elementAttr]="{ id: popUpAttachId }" ophTitleColor ophTitleTextColor ophPrimaryButtonColor
+    ophPrimaryButtonTextColor ophSecundaryButtonColor ophSecundaryButtonTextColor
+    (onContentReady)="onContentReady($event)" *ngIf="showPopup" class="popup fullScreen-popup" [showTitle]="true"
+    title="Archivos adjuntos" [dragEnabled]="false" [closeOnOutsideClick]="false" [(visible)]="showPopup"
+    [toolbarItems]="toolbarItemsAttachPopup" [fullScreen]="false" [showCloseButton]="false" [height]="popupHeight" position="top">
+    <div *dxTemplate="let data of 'content'">
+        <dx-scroll-view [height]="heightScroll" showScrollbar="always">
+            <dx-form [elementAttr]="{ id: formAttachId }" ophLabelColor ophSubTitleColor
+                (onContentReady)="onContentReady($event)" #formAttach (onInitialized)="onInitialized($event)" [formData]="attachForm"
+                [showColonAfterLabel]="false" [colCount]="6" labelLocation="top" validationGroup="attachData">
+                <dxi-item dataField="rad_cont" [colSpan]="1" [editorOptions]="{ readOnly: true}">
+                    <dxo-label text="ID"></dxo-label>
+                </dxi-item>
+                <dxi-item dataField="rad_ndoc">
+                    <dxo-label text="Nro documento"></dxo-label>
+                </dxi-item>
+                <dxi-item dataField="rad_fdoc" [colSpan]="1" editorType="dxDateBox" [editorOptions]="{ width: '100%'}">
+                    <dxo-label text="Fecha documento"></dxo-label>
+                </dxi-item>
+                <dxi-item dataField="rad_frec" [colSpan]="1" editorType="dxDateBox" [editorOptions]="{ width: '100%'}">
+                    <dxo-label text="Fecha recibo"></dxo-label>
+                </dxi-item>
+                <dxi-item dataField="rad_desc" [colSpan]="2">
+                    <dxo-label text="Descripción"></dxo-label>
+                </dxi-item>
+                <dxi-item dataField="ite_cono_c" [colSpan]="3" editorType="dxTextBox" [editorOptions]="valueListCategory">
+                    <dxo-label text="Categoria"></dxo-label>
+                </dxi-item>
+                <dxi-item dataField="arb_cono" [colSpan]="3" editorType="dxTextBox" [editorOptions]="valueListType">
+                    <dxo-label text="Tipo"></dxo-label>
+                </dxi-item>
+                <dxi-item dataField="ite_cono_g" [colSpan]="3" editorType="dxTextBox" [editorOptions]="valueListGroup">
+                    <dxo-label text="Grupo"></dxo-label>
+                </dxi-item>
+                <dxi-item dataField="ter_cono" [colSpan]="3" editorType="dxTextBox" [editorOptions]="valueListThird">
+                    <dxo-label text="Tercero"></dxo-label>
+                </dxi-item>
+                <dxi-item itemType="group" cssClass="second-group" [colSpan]="3" caption="De">
+                    <dxi-item dataField="ter_cono_o" editorType="dxTextBox" [editorOptions]="valueListThirdO">
+                        <dxo-label text="Tercero"></dxo-label>
+                    </dxi-item>
+                    <dxi-item dataField="rad_cori" [editorOptions]="valueListContO">
+                        <dxo-label text="Contacto"></dxo-label>
+                    </dxi-item>
+                </dxi-item>
+                <dxi-item itemType="group" cssClass="second-group" [colSpan]="3" caption="Para">
+                    <dxi-item dataField="ter_cono_d" editorType="dxTextBox" [editorOptions]="valueListThirdD">
+                        <dxo-label text="Tercero"></dxo-label>
+                    </dxi-item>
+                    <dxi-item dataField="rad_cdes" [editorOptions]="valueListContD">
+                        <dxo-label text="Contacto"></dxo-label>
+                    </dxi-item>
+                </dxi-item>
+                <dxi-item itemType="group" [colSpan]="6">
+                    <dxi-item itemType="tabbed">
+                        <dxo-tab-panel-options [deferRendering]="false"></dxo-tab-panel-options>
+                        <dxi-tab title="Proyecto" [colCount]="6">
+                            <dxi-item dataField="top_cono" [colSpan]="3" [editorOptions]="valueListToper">
+                                <dxo-label text="Tipo de operación"></dxo-label>
+                            </dxi-item>
+                            <dxi-item dataField="reg_nume" [colSpan]="1" [editorOptions]="{ readOnly: true}">
+                                <dxo-label text="Número"></dxo-label>
+                            </dxi-item>
+                            <dxi-item dataField="reg_fech" [colSpan]="1" [editorOptions]="{ readOnly: true}">
+                                <dxo-label text="Fecha"></dxo-label>
+                            </dxi-item>
+                            <dxi-item itemType="empty" [colSpan]="1">
+                            </dxi-item>
+                            <dxi-item dataField="arb_cpno" [colSpan]="5" [editorOptions]="{ readOnly: true}">
+                                <dxo-label text="Proyecto"></dxo-label>
+                            </dxi-item>
+                        </dxi-tab>
+                        <dxi-tab title="Documento origen" [colCount]="6">
+                            <dxi-item dataField="rad_orig" [colSpan]="1" [editorOptions]="valueListOrig">
+                                <dxo-label text="Número"></dxo-label>
+                            </dxi-item>
+                            <dxi-item dataField="rad_fdoo" [colSpan]="1" [editorOptions]="{ readOnly: true}">
+                                <dxo-label text="Fecha"></dxo-label>
+                            </dxi-item>
+                            <dxi-item dataField="rad_deso" [colSpan]="3" [editorOptions]="{ readOnly: true}">
+                                <dxo-label text="Descripción"></dxo-label>
+                            </dxi-item>
+                        </dxi-tab>
+                        <dxi-tab title="Observación">
+                            <dxi-item dataField="rad_obse" [colSpan]="6" editorType="dxTextArea"
+                                [editorOptions]="{ height: 100 }">
+                                <dxo-label text=" "></dxo-label>
+                            </dxi-item>
+                        </dxi-tab>
+                    </dxi-item>
+                </dxi-item>
+                <dxi-item itemType="group" [colSpan]="6" caption="Lista de archivos adjuntos">
+                    <dx-data-grid [elementAttr]="{ id: gridAttachId }" ophGridHeaderColor ophGridHeaderTextColor
+                        (onContentReady)="onContentReady($event)" #attachGrid id="gridContainer"
+                        [allowColumnResizing]="true" [allowColumnReordering]="true" [allowColumnReordering]="true"
+                        [showBorders]="true" [showRowLines]="true" [columnAutoWidth]="true"
+                        [dataSource]="listDataAttach" [loadPanel]="{enabled:true}" (onRowClick)="onRowClickDataAttach($event)">
+                        <dxo-filter-row [visible]="false"></dxo-filter-row>
+                        <dxo-header-filter [visible]="false"></dxo-header-filter>
+                        <dxo-selection mode="single"></dxo-selection>
+                    </dx-data-grid>
+                </dxi-item>
+            </dx-form>
+        </dx-scroll-view>
+    </div>
+</dx-popup>
+
+<dx-popup [elementAttr]="{ id: popUpForeignKeyId }" ophTitleColor ophTitleTextColor ophPrimaryButtonColor ophPrimaryButtonTextColor ophSecundaryButtonColor ophSecundaryButtonTextColor (onContentReady)="onContentReady($event)" *ngIf="showPopupForeign" class="popup"
+    [showTitle]="true" [title]="searchTitle" [dragEnabled]="false" [closeOnOutsideClick]="false" [(visible)]="showPopupForeign" height="70%" [toolbarItems]="toolbarItemsForeignKeyPopup">
+
+    <div *dxTemplate="let data of 'content'">
+        <dx-data-grid [elementAttr]="{ id: gridForeignKeyId }" ophGridHeaderColor ophGridHeaderTextColor (onContentReady)="onContentReady($event)" #foreignKeyGrid id="gridContainer" height="95%" [allowColumnResizing]="true" [allowColumnReordering]="true"
+            [allowColumnReordering]="true" [showBorders]="true" [showRowLines]="true" [columnAutoWidth]="true" [dataSource]="listDataForeignKey" [loadPanel]="{enabled:true}" (onRowDblClick)="onRowDblClickSearch($event)" (onRowClick)="onRowClickSearch($event)"
+            [selection]="{ mode: 'single' }" [hoverStateEnabled]="true">
+            <dxo-paging [pageSize]="10"></dxo-paging>
+            <dxo-pager [showPageSizeSelector]="true" [allowedPageSizes]="[5, 10, 20]" [showInfo]="true">
+            </dxo-pager>
+            <dxo-filter-row [visible]="false"></dxo-filter-row>
+            <dxo-header-filter [visible]="false"></dxo-header-filter>
+        </dx-data-grid>
+    </div>
+</dx-popup>
+
+<dx-popup [elementAttr]="{ id: popUpSearchFKId }" ophTitleColor ophTitleTextColor ophPrimaryButtonColor ophPrimaryButtonTextColor ophSecundaryButtonColor ophSecundaryButtonTextColor (onContentReady)="onContentReady($event)" title="Seven QBE" *ngIf="showPopupSearchFKConditions"
+    [(visible)]="showPopupSearchFKConditions" width="50%" height="70%" [showTitle]="true" [dragEnabled]="false" [closeOnOutsideClick]="false" [toolbarItems]="toolbarItemsSearchFKPopup" [showCloseButton]="false">
+    <div *dxTemplate="let data of 'content'">
+        <dx-data-grid [elementAttr]="{ id: gridSearchFKId }" ophGridHeaderColor ophGridHeaderTextColor (onContentReady)="onContentReady($event)" [dataSource]="listSearchFKConditions" [allowColumnReordering]="false" [allowColumnResizing]="true" [hoverStateEnabled]="true"
+            [showColumnLines]="true" [showRowLines]="true" [showBorders]="true" [columnAutoWidth]="false" height="105%">
+            <dxo-filter-row [visible]="false"></dxo-filter-row>
+            <dxo-header-filter [visible]="false"></dxo-header-filter>
+            <dxo-editing [mode]="'cell'" [allowUpdating]="true"></dxo-editing>
+
+            <dxi-column dataField="label" caption="Descripción" [allowEditing]="false">
+            </dxi-column>
+            <dxi-column dataField="operator" caption="Operador" [width]="135">
+                <dxo-lookup [dataSource]="listOperator" valueExpr="value" displayExpr="text">
+                </dxo-lookup>
+            </dxi-column>
+            <dxi-column dataField="value" caption="Criterio">
+            </dxi-column>
+            <dxi-column dataField="type" caption="Tipo" [allowEditing]="false" [width]="50">
+            </dxi-column>            
+            <dxi-column dataField="field" caption="Nombre" [allowEditing]="false">
+            </dxi-column>
+        </dx-data-grid>
+    </div>
+</dx-popup>
+
+<input #AttachFile style="display: none;" (change)="changeFile($event)" type='file' id="AttachfileImport" accept=".*" />

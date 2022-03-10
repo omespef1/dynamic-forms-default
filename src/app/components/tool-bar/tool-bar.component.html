@@ -1,0 +1,23 @@
+<ngb-tabset id="toolbar" *ngIf="menu" #tabMainContent>
+    <ngb-tab *ngFor="let item of menu">
+        <ng-template ngbTabContent>
+            <div class="optb-main-content">
+                <div class="optb-group-content" *ngFor="let group of item.groups; let idxg = index">
+                    <div class="optb-options-content" *ngFor="let opt of group.items; let idx = index">
+
+                        <div (click)="onItemClick(opt)" class="optb-item-content d-flex flex-column" data-toggle="tooltip" data-placement="bottom" [title]="(opt.shortcut ? opt.tooltip + '\n' + opt.shortcut : opt.tooltip)">
+
+                            <div class="optb-icon-content d-flex justify-content-center">
+                                <i class="{{opt.icon}}" *ngIf="opt.icon"></i>
+                            </div>
+
+                            <div class="optb-text-content">
+                                <span *ngIf="opt.text">{{opt.text}}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </ng-template>
+    </ngb-tab>
+</ngb-tabset>

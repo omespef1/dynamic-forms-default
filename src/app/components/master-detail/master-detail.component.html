@@ -1,0 +1,297 @@
+<div>
+    <dx-button type="button" [elementAttr]="{ id: BtnFuncEspec1Id, class: 'primary-button-color'}" (click)="ExecFuncEspec(1)" 
+        ophPrimaryButtonColor ophPrimaryButtonTextColor ophSecundaryButtonColor ophSecundaryButtonTextColor (onContentReady)="onContentReady($event)" 
+        [visible]="funcEspec1.length > 0 && funcEspec1 !== 'CALCDOC' && funcEspec1 !== 'CALCTOT' && funcEspec1 !== 'UBICA' && funcEspec1 !== 'LEGALCRUCE'"
+        [text]="button1txt"
+        [icon]="button1icon">
+    </dx-button>
+    <dx-button type="button" [elementAttr]="{ id: BtnFuncEspec2Id, class: 'primary-button-color'}" (click)="ExecFuncEspec(2)" 
+        ophPrimaryButtonColor ophPrimaryButtonTextColor ophSecundaryButtonColor ophSecundaryButtonTextColor (onContentReady)="onContentReady($event)" 
+        [visible]="funcEspec2.length > 0 && funcEspec2 !== lglcruField"
+        [text]="button2txt"
+        [icon]="button2icon">
+    </dx-button>            
+</div>
+<div class="buttongroups-container" *ngIf="listData.length > 0">
+    <dx-button-group [items]="listButtons" (onItemClick)="itemClick($event)"></dx-button-group>
+</div>
+<dx-data-grid [elementAttr]="{ id: gridId }" ophGridHeaderColor ophGridHeaderTextColor (onContentReady)="onContentReady($event)" [columnHidingEnabled]="false" (onInitialized)="onInitializedGridDetail($event)" (onRowUpdated)="onRowUpdated($event)" [wordWrapEnabled]="metadataGrid.wordWrapEnabled"
+    *ngIf="metadataGrid" [allowColumnResizing]="false" [allowColumnReordering]="true" [allowColumnResizing]="true" [hoverStateEnabled]="true" [showRowLines]="true" [showBorders]="true" [height]="'auto'" [width]="'auto'" [columnAutoWidth]="true" [dataSource]="listData"
+    [loadPanel]="{enabled:true}" (onRowClick)="onRowClick($event)" (onRowDblClick)="onRowDoubleClick($event)" (onToolbarPreparing)="onToolbarPreparing($event)" [groupPanel]="{visible:true}"
+    (onContextMenuPreparing)="addMenuItems($event)">
+    <dxo-column-chooser [enabled]="true"></dxo-column-chooser>
+    <dxo-filter-row [visible]="true"></dxo-filter-row>
+    <dxo-header-filter [visible]="true"></dxo-header-filter>
+    <dxo-selection mode="single"></dxo-selection>
+    <dxo-editing [mode]="'cell'" [allowUpdating]="true"></dxo-editing>
+    <dxo-paging [enabled]="false"></dxo-paging>
+</dx-data-grid>
+<div class="pagers">
+    <ngb-pagination (pageChange)="onPageChange($event)" *ngIf="totalRecords" class="d-flex justify-content-end" [collectionSize]="totalRecords" [pageSize]="searchData.pageSize" [(page)]="page" [maxSize]="5" [boundaryLinks]="true"></ngb-pagination>
+</div>
+<br>
+<dx-popup [elementAttr]="{ id: popUpId }" ophTitleColor ophTitleTextColor ophPrimaryButtonColor ophPrimaryButtonTextColor ophSecundaryButtonColor ophSecundaryButtonTextColor (onContentReady)="onContentReady($event)" *ngIf="showPopupDetail" [showTitle]="true"
+    [title]="formTitle" [dragEnabled]="false" [closeOnOutsideClick]="false" [(visible)]="showPopupDetail" [height]="popupHeight" (onHiding)="onHidingPopup()" [toolbarItems]="toolbarItemsMasterDetailPopup" [fullScreen]="false" position="top">
+
+
+    <div *dxTemplate="let data of 'content'">
+
+        <dx-scroll-view [height]="heightScroll" showScrollbar="always">
+            <dx-form [elementAttr]="{ id: formId }" ophLabelColor ophSubTitleColor (onContentReady)="onContentReady($event)" (onInitialized)="onInitialized($event)" id="form" [showColonAfterLabel]="false" [colCount]="4" [minColWidth]="300" labelLocation="top" [formData]="dataDetail"
+                [validationGroup]="validationGroupName" [height]="formHeight">
+
+            </dx-form>
+
+            <br>
+            <ngb-tabset *ngIf="showMasterDetail && mainForm.UseMasterDetail" id="tabsDetail" [destroyOnHide]="false">
+                <ngb-tab *ngFor="let item of listMainFormMasterDetail | filterArray" id="{{item.ProgramCode}}" [title]="item.Title">
+                    <ng-template ngbTabContent>
+                        <br>
+                        <app-master-detail [dataMaster]="dataDetail" [SupParentMainForm]="parentMainForm" [parentMainForm]="mainForm" [mainForm]="item"
+                        (responseRefresh)="responseRefreshDet($event)"></app-master-detail>
+                    </ng-template>
+                </ngb-tab>
+            </ngb-tabset>
+        </dx-scroll-view>
+
+    </div>
+
+</dx-popup>
+
+<dx-popup [elementAttr]="{ id: popUpAddForeignKeyId }" ophTitleColor ophTitleTextColor ophPrimaryButtonColor ophPrimaryButtonTextColor ophSecundaryButtonColor ophSecundaryButtonTextColor (onContentReady)="onContentReady($event)" *ngIf="showPopupAddForeignKey"
+    class="popup" [showTitle]="true" title="Agregar Registro" [dragEnabled]="false" [closeOnOutsideClick]="false" [(visible)]="showPopupAddForeignKey" [fullScreen]="true" (onHiding)="onHidingAddForeignKey()">
+    <div *dxTemplate="let data of 'content'">
+        <app-form-visualization [formCode]="formCodeForeignKey" [addInForeignKey]="true" (saveSuccess)="saveSucccessForeignKey()"></app-form-visualization>
+    </div>
+</dx-popup>
+
+<dx-popup [elementAttr]="{ id: popUpForeignKeyId }" ophTitleColor ophTitleTextColor ophPrimaryButtonColor ophPrimaryButtonTextColor ophSecundaryButtonColor ophSecundaryButtonTextColor (onContentReady)="onContentReady($event)" *ngIf="searchVisible" class="popup"
+    [showTitle]="true" [title]="searchTitle" [dragEnabled]="false" [closeOnOutsideClick]="false" [(visible)]="searchVisible" [height]="popupHeight" [toolbarItems]="toolbarItemsForeignKeyPopup" (onHiding)="onHidingSearch()">
+
+    <div *dxTemplate="let data of 'content'">
+        <dx-data-grid [elementAttr]="{ id: gridForeignKeyId }" ophGridHeaderColor ophGridHeaderTextColor (onContentReady)="onContentReady($event)" #foreignKeyGrid id="gridContainer" [height]="gridHeight" [allowColumnResizing]="true" [allowColumnReordering]="true"
+            [allowColumnReordering]="true" [showBorders]="true" [showRowLines]="true" [columnAutoWidth]="true" [dataSource]="listDataForeignKey" [loadPanel]="{enabled:true}" (onRowDblClick)="onRowDblClickSearch($event)" (onRowClick)="onRowClickSearch($event)"
+            (onToolbarPreparing)="onToolbarPreparingSearch($event)">
+
+            <dxo-export [enabled]="false" fileName="data" [allowExportSelectedData]="true">
+            </dxo-export>
+            <dxo-filter-row [visible]="false"></dxo-filter-row>
+            <dxo-header-filter [visible]="false"></dxo-header-filter>
+            <dxo-selection mode="single"></dxo-selection>
+
+        </dx-data-grid>
+        <div class="pager">
+            <ngb-pagination (pageChange)="onPageChangeSearch($event)" *ngIf="totalRecordsSearch" class="d-flex justify-content-end" [collectionSize]="totalRecordsSearch" [(page)]="pageSearch" [maxSize]="5" [boundaryLinks]="true"></ngb-pagination>
+        </div>
+    </div>
+</dx-popup>
+
+<dx-popup [elementAttr]="{ id: popUpDataSourceId }" ophTitleColor ophTitleTextColor ophPrimaryButtonColor ophPrimaryButtonTextColor ophSecundaryButtonColor ophSecundaryButtonTextColor (onContentReady)="onContentReady($event)" *ngIf="dataSourceVisible"
+    class="popup" [showTitle]="true" title="Datos" [dragEnabled]="false" [closeOnOutsideClick]="false" [toolbarItems]="toolbarItemsDataSourcePopup" [(visible)]="dataSourceVisible" [height]="popupHeight">
+
+    <div *dxTemplate="let data of 'content'">
+        <dx-data-grid [elementAttr]="{ id: gridDataSourceId }" ophGridHeaderColor ophGridHeaderTextColor (onContentReady)="onContentReady($event)" #dataSourceGrid id="gridContainer" [height]="gridHeight" [allowColumnResizing]="true" [allowColumnReordering]="true"
+            [allowColumnReordering]="true" [showBorders]="true" [showRowLines]="true" [columnAutoWidth]="true" [dataSource]="listDataSource" [loadPanel]="{enabled:true}" (onRowDblClick)="onRowDblClickDataSource($event)" (onRowClick)="onRowClickDataSource($event)">
+
+            <dxo-export [enabled]="true" fileName="data" [allowExportSelectedData]="true">
+            </dxo-export>
+            <dxo-filter-row [visible]="true"></dxo-filter-row>
+            <dxo-header-filter [visible]="true"></dxo-header-filter>
+            <dxo-selection mode="single"></dxo-selection>
+
+        </dx-data-grid>
+    </div>
+</dx-popup>
+
+<dx-popup [elementAttr]="{ id: popUpFileId }" ophTitleColor ophTitleTextColor ophPrimaryButtonColor ophPrimaryButtonTextColor ophSecundaryButtonColor ophSecundaryButtonTextColor (onContentReady)="onContentReady($event)" [showCloseButton]="false" (onShowing)="onShowingPopupDocument()"
+    *ngIf="fileUploadVisible" class="popup" [showTitle]="true" title="Subir Archivo" [dragEnabled]="false" [closeOnOutsideClick]="false" [(visible)]="fileUploadVisible" [width]="500" [height]="600" (onHiding)="onHidingSearch()" [toolbarItems]="toolbarItemsFileUploadPopup">
+
+    <div *dxTemplate="let data of 'content'">
+        <div ng2FileDrop [ngClass]="{'nv-file-over': hasBaseDropZoneOver}" (fileOver)="fileOverBase($event)" [uploader]="uploader" class="well">
+            <h3>Arrastra tus archivos a esta zona</h3>
+        </div>
+
+        <dx-data-grid [elementAttr]="{ id: gridFileId }" ophGridHeaderColor ophGridHeaderTextColor (onContentReady)="onContentReady($event)" id="gridContainer" [height]="250" [allowColumnResizing]="true" [allowColumnReordering]="true" [allowColumnReordering]="true"
+            [showBorders]="true" [showRowLines]="true" [dataSource]="listDocuments" [loadPanel]="{enabled:true}">
+
+            <dxo-selection mode="single"></dxo-selection>
+
+            <dxi-column [width]="200" caption="Archivo" dataField="FileName">
+            </dxi-column>
+
+            <dxi-column [width]="100" caption="Descarga" cellTemplate="cellTemplate"></dxi-column>
+            <div *dxTemplate="let row of 'cellTemplate'" class="text-center">
+                <span>
+                    <i class="fas fa-download pointer" (click)="download(row)" aria-hidden="true"></i>
+                </span>
+            </div>
+        </dx-data-grid>
+    </div>
+</dx-popup>
+
+<dx-popup [elementAttr]="{ id: popUpSearchFKId }" ophTitleColor ophTitleTextColor ophPrimaryButtonColor ophPrimaryButtonTextColor ophSecundaryButtonColor ophSecundaryButtonTextColor (onContentReady)="onContentReady($event)" title="Seven QBE" *ngIf="showPopupSearchFKConditions"
+    [(visible)]="showPopupSearchFKConditions" width="50%" [height]="popupHeight" [showTitle]="true" [dragEnabled]="false" [closeOnOutsideClick]="false" [toolbarItems]="toolbarItemsSearchFKPopup" [showCloseButton]="false">
+    <div *dxTemplate="let data of 'content'">
+        <dx-data-grid [elementAttr]="{ id: gridSearchFKId }" ophGridHeaderColor ophGridHeaderTextColor (onContentReady)="onContentReady($event)" [dataSource]="listSearchFKConditions" [allowColumnReordering]="false" [allowColumnResizing]="true" [hoverStateEnabled]="true"
+            [showColumnLines]="true" [showRowLines]="true" [showBorders]="true" [columnAutoWidth]="false" [height]="gridSearchFKHeight">
+            <dxo-filter-row [visible]="false"></dxo-filter-row>
+            <dxo-header-filter [visible]="false"></dxo-header-filter>
+            <dxo-editing [mode]="'cell'" [allowUpdating]="true"></dxo-editing>
+
+            <dxi-column dataField="label" caption="Descripción" [allowEditing]="false">
+            </dxi-column>
+            <dxi-column dataField="operator" caption="Operador" [width]="135">
+                <dxo-lookup [dataSource]="listOperator" valueExpr="value" displayExpr="text">
+                </dxo-lookup>
+            </dxi-column>
+            <dxi-column dataField="value" caption="Criterio">
+            </dxi-column>
+            <dxi-column dataField="type" caption="Tipo" [allowEditing]="false" [width]="50">
+            </dxi-column>            
+            <dxi-column dataField="field" caption="Nombre" [allowEditing]="false">
+            </dxi-column>
+        </dx-data-grid>
+    </div>
+</dx-popup>
+
+<dx-popup [elementAttr]="{ id: popUpBaseDocId }" ophTitleColor ophTitleTextColor ophPrimaryButtonColor ophPrimaryButtonTextColor ophSecundaryButtonColor ophSecundaryButtonTextColor (onContentReady)="onContentReady($event)" *ngIf="searchBaseDoc" class="popup"
+    [showTitle]="true" [title]="baseDocTitle" [dragEnabled]="false" [closeOnOutsideClick]="false" [(visible)]="searchBaseDoc" [height]="popupHeight" [toolbarItems]="toolbarItemsBaseDocPopup" (onHiding)="onHidingSearch()">
+
+    <div *dxTemplate="let data of 'content'">
+        <dx-data-grid [elementAttr]="{ id: gridBaseDocId }" ophGridHeaderColor ophGridHeaderTextColor (onContentReady)="onContentReady($event)" #baseDocGrid id="gridContainer" [height]="gridHeightBasedoc" [allowColumnResizing]="true" [allowColumnReordering]="true"
+            [allowColumnReordering]="true" [showBorders]="true" [showRowLines]="true" [columnAutoWidth]="true" [dataSource]="listDataBaseDoc" [loadPanel]="{enabled:true}" (onRowDblClick)="onRowDblClickBaseDoc($event)" (onRowClick)="onRowClickBaseDoc($event)"
+            (onToolbarPreparing)="onToolbarPreparingBaseDoc($event)">
+            <dxo-filter-row [visible]="false"></dxo-filter-row>
+            <dxo-header-filter [visible]="false"></dxo-header-filter>
+            <dxo-selection mode="single"></dxo-selection>
+        </dx-data-grid>
+        <div class="pager">
+            <ngb-pagination (pageChange)="onPageChangeSearch($event)" *ngIf="totalRecordsSearch" class="d-flex justify-content-end" [collectionSize]="totalRecordsSearch" [(page)]="pageSearch" [maxSize]="5" [boundaryLinks]="true"></ngb-pagination>
+        </div>
+    </div>
+</dx-popup>
+
+<dx-popup [elementAttr]="{ id: popUpSearchBaseDocId }" ophTitleColor ophTitleTextColor ophPrimaryButtonColor ophPrimaryButtonTextColor ophSecundaryButtonColor ophSecundaryButtonTextColor (onContentReady)="onContentReady($event)" title="Seven QBE" *ngIf="showPopupSearchBasedocConditions"
+    [(visible)]="showPopupSearchBasedocConditions" width="50%" [height]="popupHeight" [showTitle]="true" [dragEnabled]="false" [closeOnOutsideClick]="false" [toolbarItems]="toolbarItemsSearchBasedocPopup" [showCloseButton]="false">
+    <div *dxTemplate="let data of 'content'">
+        <dx-data-grid [elementAttr]="{ id: gridSearchBasedocId }" ophGridHeaderColor ophGridHeaderTextColor (onContentReady)="onContentReady($event)" [dataSource]="listSearchBasedocConditions" [allowColumnReordering]="false" [allowColumnResizing]="true" [hoverStateEnabled]="true"
+            [showColumnLines]="true" [showRowLines]="true" [showBorders]="true" [columnAutoWidth]="false" [height]="gridSearchBasedocHeight">
+            <dxo-filter-row [visible]="false"></dxo-filter-row>
+            <dxo-header-filter [visible]="false"></dxo-header-filter>
+            <dxo-editing [mode]="'cell'" [allowUpdating]="true"></dxo-editing>
+
+            <dxi-column dataField="label" caption="Descripción" [allowEditing]="false">
+            </dxi-column>
+            <dxi-column dataField="operator" caption="Operador" [width]="135">
+                <dxo-lookup [dataSource]="listOperator" valueExpr="value" displayExpr="text">
+                </dxo-lookup>
+            </dxi-column>
+            <dxi-column dataField="value" caption="Criterio">
+            </dxi-column>
+            <dxi-column dataField="type" caption="Tipo" [allowEditing]="false" [width]="50">
+            </dxi-column>            
+            <dxi-column dataField="field" caption="Nombre" [allowEditing]="false">
+            </dxi-column>
+        </dx-data-grid>
+    </div>
+</dx-popup>
+
+<dx-popup [elementAttr]="{ id: popUpConsulUbicaId }" ophTitleColor ophTitleTextColor ophPrimaryButtonColor ophPrimaryButtonTextColor ophSecundaryButtonColor ophSecundaryButtonTextColor (onContentReady)="onContentReady($event)" title="Ver ubicaciones" *ngIf="showPopupConsulUbica"
+    [(visible)]="showPopupConsulUbica" width="85%" [height]="popupHeight" [showTitle]="true" [dragEnabled]="false" [closeOnOutsideClick]="false" [toolbarItems]="toolbarItemsConsulUbicaPopup" [showCloseButton]="false">
+    <div *dxTemplate="let data of 'content'">
+        <dx-data-grid [elementAttr]="{ id: gridConsulUbicaId }" ophGridHeaderColor ophGridHeaderTextColor (onContentReady)="onContentReady($event)" #consulUbicaGrid id="gridContainer" [height]="gridHeightBasedoc" [allowColumnResizing]="true" [allowColumnReordering]="true"
+            [allowColumnReordering]="true" [showBorders]="true" [showRowLines]="true" [columnAutoWidth]="true" [dataSource]="listDataUbica" [loadPanel]="{enabled:true}">
+            <dxo-filter-row [visible]="false"></dxo-filter-row>
+            <dxo-header-filter [visible]="false"></dxo-header-filter>
+            <dxo-selection mode="single"></dxo-selection>
+        </dx-data-grid>
+        <div class="pager">
+            <ngb-pagination (pageChange)="onPageChangeSearch($event)" *ngIf="totalRecordsSearch" class="d-flex justify-content-end" [collectionSize]="totalRecordsSearch" [(page)]="pageSearch" [maxSize]="5" [boundaryLinks]="true"></ngb-pagination>
+        </div>        
+    </div>
+</dx-popup>
+
+<dx-popup [elementAttr]="{ id: popUpSpecialDetId }" ophTitleColor ophTitleTextColor ophPrimaryButtonColor ophPrimaryButtonTextColor ophSecundaryButtonColor ophSecundaryButtonTextColor (onContentReady)="onContentReady($event)" *ngIf="searchSpecialDet" class="popup"
+    [showTitle]="true" title="Consultar detalles" [dragEnabled]="false" [closeOnOutsideClick]="false" [(visible)]="searchSpecialDet" [height]="popupHeight" [toolbarItems]="toolbarItemsSpecialDetPopup" (onHiding)="onHidingSearch()">
+    <div *dxTemplate="let data of 'content'">
+        <dx-data-grid [elementAttr]="{ id: gridSpecialDetId }" ophGridHeaderColor ophGridHeaderTextColor (onContentReady)="onContentReady($event)" #specialDetGrid id="gridContainer" [height]="gridHeightBasedoc" [allowColumnResizing]="true" [allowColumnReordering]="true"
+            [allowColumnReordering]="true" [showBorders]="true" [showRowLines]="true" [columnAutoWidth]="true" [dataSource]="listDataSpecialDet" [loadPanel]="{enabled:true}" (onRowDblClick)="onRowDblClickSpecialDet($event)" (onRowClick)="onRowClickSpecialDet($event)"
+            (onToolbarPreparing)="onToolbarPreparingSpecialDet($event)">
+            <dxo-filter-row [visible]="false"></dxo-filter-row>
+            <dxo-header-filter [visible]="false"></dxo-header-filter>
+            <dxo-selection mode="single"></dxo-selection>
+        </dx-data-grid>
+    </div>
+</dx-popup>
+
+<dx-popup [elementAttr]="{ id: popUpSearchSpecialDetId }" ophTitleColor ophTitleTextColor ophPrimaryButtonColor ophPrimaryButtonTextColor ophSecundaryButtonColor ophSecundaryButtonTextColor (onContentReady)="onContentReady($event)" title="Seven QBE" *ngIf="showPopupSearchSpecialdetConditions"
+    [(visible)]="showPopupSearchSpecialdetConditions" width="50%" [height]="popupHeight" [showTitle]="true" [dragEnabled]="false" [closeOnOutsideClick]="false" [toolbarItems]="toolbarItemsSearchSpecialdetPopup" [showCloseButton]="false">
+    <div *dxTemplate="let data of 'content'">
+        <dx-data-grid [elementAttr]="{ id: gridSearchSpecialdetId }" ophGridHeaderColor ophGridHeaderTextColor (onContentReady)="onContentReady($event)" [dataSource]="listSearchSpecialdetConditions" [allowColumnReordering]="false" [allowColumnResizing]="true" [hoverStateEnabled]="true"
+            [showColumnLines]="true" [showRowLines]="true" [showBorders]="true" [columnAutoWidth]="false" [height]="gridSearchSpecialdetHeight">
+            <dxo-filter-row [visible]="false"></dxo-filter-row>
+            <dxo-header-filter [visible]="false"></dxo-header-filter>
+            <dxo-editing [mode]="'cell'" [allowUpdating]="true"></dxo-editing>
+
+            <dxi-column dataField="label" caption="Descripción" [allowEditing]="false">
+            </dxi-column>
+            <dxi-column dataField="operator" caption="Operador" [width]="135">
+                <dxo-lookup [dataSource]="listOperator" valueExpr="value" displayExpr="text">
+                </dxo-lookup>
+            </dxi-column>
+            <dxi-column dataField="value" caption="Criterio">
+            </dxi-column>
+            <dxi-column dataField="type" caption="Tipo" [allowEditing]="false" [width]="50">
+            </dxi-column>            
+            <dxi-column dataField="field" caption="Nombre" [allowEditing]="false">
+            </dxi-column>
+        </dx-data-grid>
+    </div>
+</dx-popup>
+
+<dx-popup [elementAttr]="{ id: popUpMessageId }" ophTitleColor ophTitleTextColor ophPrimaryButtonColor ophPrimaryButtonTextColor 
+ophSecundaryButtonColor ophSecundaryButtonTextColor (onContentReady)="onContentReady($event)" [title]="messageTitle" *ngIf="showPopupMessage"
+    [(visible)]="showPopupMessage" width="70%" height="70%" [showTitle]="true" [dragEnabled]="false" [closeOnOutsideClick]="false" 
+    [toolbarItems]="toolbarItemsMessagePopup" [showCloseButton]="false">
+    <div *dxTemplate="let data of 'content'">
+        <dx-data-grid [elementAttr]="{ id: gridMessageId }" ophGridHeaderColor ophGridHeaderTextColor (onContentReady)="onContentReady($event)" #messageGrid id="gridContainer" 
+        [allowColumnResizing]="true" [allowColumnReordering]="true" [allowColumnReordering]="true" [showBorders]="true" 
+        [showRowLines]="true" [columnAutoWidth]="true" [dataSource]="listDataMessage" [loadPanel]="{enabled:true}">
+            <dxo-filter-row [visible]="false"></dxo-filter-row>
+            <dxo-header-filter [visible]="false"></dxo-header-filter>
+            <dxo-selection mode="single"></dxo-selection>
+        </dx-data-grid>
+    </div>
+</dx-popup>
+
+<app-excel-import *ngIf="showPopupImportExcel" [showPopup]="showPopupImportExcel" [listItemsForm]="listItemsForm" [parentMainForm]="parentMainForm" [dataMaster]="dataMaster" [mainForm]="mainForm" (responseImport)="responseImport($event)"></app-excel-import>
+
+<!-- <app-total-fields *ngIf="funcEspec1 === 'CALCTOT'" [listItemsTotal]="listItemsTotal" [parentMainForm]="parentMainForm" [dataMaster]="dataMaster" [mainForm]="mainForm"></app-total-fields> -->
+
+<div *ngIf="funcEspec1 === 'CALCTOT'">
+    <dx-form [elementAttr]="{ id: formtotId }" ophLabelColor ophSubTitleColor (onContentReady)="onContentReady($event)" 
+    (onInitialized)="onInitializedt($event)" id="formtot" [showColonAfterLabel]="false" [colCount]="columnsTot" [minColWidth]="300" 
+    labelLocation="top" [formData]="dataTotal"
+    [validationGroup]="validationGroupName" [height]="formHeight">
+    </dx-form>
+</div>
+
+<div class="pnltotal" *ngIf="funcEspec1 === 'CALCDOC'">
+    <div class="elemtotal">
+        Total
+    </div>
+    <div class="elemtotal">
+        <dx-number-box
+        format="$ #,##0.##"
+        [readOnly]="true"
+        [value]="totaldocum">
+    </dx-number-box>
+    </div>
+    <div class="elemtotal">
+        <dx-button type="button" [elementAttr]="{ id: BtnFuncEspec3Id, class: 'primary-button-color'}" (click)="ExecFuncEspec(3)" 
+            ophPrimaryButtonColor ophPrimaryButtonTextColor ophSecundaryButtonColor ophSecundaryButtonTextColor (onContentReady)="onContentReady($event)" 
+            [text]="button1txt"
+            [icon]="button1icon">
+        </dx-button>
+    </div>
+</div>

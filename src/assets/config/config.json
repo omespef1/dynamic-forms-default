@@ -1,0 +1,21 @@
+{
+    "opheliaSuiteCoreApiV1": "http://sevenop.digitalware.co:8080/API/api/",
+    "opheliaSuiteSecurityApiV1": "http://sevenop.digitalware.co:8080/SECURITY/api/",    
+    "opheliaSuiteDynamicFormApiV1": "http://localhost/Prometheus.WebServices.ProcessTable/api/",
+    "opheliaSuiteBRMApiV2": "http://sevenop.digitalware.co:8085/brmv2core/api/",
+    "urlSSBApi": "http://sevenop.digitalware.co:8082/Agoraapi/api/",
+    "urlSecuritySeven":"https://sevenop.digitalware.co/Api.Security/api/",
+    "urlBaseMicroApplications": "https://sevenop.digitalware.co/dynamicforms/#/redirect-external",
+    "designerMicroAppCode": "DYNAMICFORMS",
+    "datetimeFormat":"YYYY-MM-DD",
+    "urlMainMenuSeven":"https://sevenop.digitalware.co/Api.Menu/api/",
+    "urlWsConseTransaction": "http://localhost/RGnConse/api/",
+    "urlWsValidateBlome": "http://localhost/RGnBlome/api/",    
+    "urlReportServer": "https://sevenop.digitalware.co:441/viewer/",
+    "urlReportTables": "http://localhost/",
+    "urlProcessExec": "http://localhost/",
+    "urlWsGnGenerFuncs": "http://localhost/RGngener/api/",
+    "urlWsGnCtrlo": "http://localhost/RGnctrlo/api/",
+    "urlMicroApplications": "https://sevenop.digitalware.co/Api.Microaplication/api/",
+    "urlBaseWsTransaction": "http://localhost/"
+}

@@ -1,0 +1,73 @@
+<ngb-tabset [destroyOnHide]="false">
+    <ngb-tab>
+        <ng-template ngbTabTitle>
+            <span ngbTooltip="Propiedades"><i class='fas fa-list' aria-hidden='true'></i></span>
+        </ng-template>
+        <ng-template ngbTabContent>
+            <br>
+            <dx-form [elementAttr]="{ id: formId }" ophLabelColor ophSubTitleColor (onContentReady)="onContentReady($event)" #form [showColonAfterLabel]="false" [colCount]="1" [minColWidth]="300" labelLocation="top">
+                <dxi-item dataField="Title" [editorOptions]="{maxLength:100 , readOnly:true , onFocusIn : onFocusInCondition }">
+                    <dxo-label text="Condición">
+                    </dxo-label>
+                </dxi-item>
+                <dxi-item>
+                    <dxo-label text="Ajustar Filas">
+                    </dxo-label>
+                    <dx-select-box [dataSource]="listOptions" valueExpr="value" displayExpr="text" [(value)]="metadataGrid.wordWrapEnabled">
+                    </dx-select-box>
+                </dxi-item>
+                <dxi-item>
+                    <dxo-label text="Tamaño de Página">
+                    </dxo-label>
+                    <dx-number-box [min]="0" [max]="100" [(value)]="metadataGrid.pageSize"></dx-number-box>
+                </dxi-item>
+                <dxi-item>
+                    <dxo-label text="Permitir Editar">
+                    </dxo-label>
+                    <dx-select-box [dataSource]="listOptions" valueExpr="value" displayExpr="text" [(value)]="metadataGrid.allowEditing">
+                    </dx-select-box>
+                </dxi-item>
+            </dx-form>
+        </ng-template>
+    </ngb-tab>
+</ngb-tabset>
+<br>
+
+
+
+
+<dx-popup [elementAttr]="{ id: popUpId }" ophTitleColor ophTitleTextColor ophPrimaryButtonColor ophPrimaryButtonTextColor ophSecundaryButtonColor ophSecundaryButtonTextColor (onContentReady)="onContentReady($event)" title="Diseñador de Condición" *ngIf="showPopupConditionsDesigner"
+    [(visible)]="showPopupConditionsDesigner" width="70%" [height]="popupHeight" [showTitle]="true" [dragEnabled]="false" [closeOnOutsideClick]="false" [toolbarItems]="toolbarItemsFontPopup" [showCloseButton]="false">
+    <div *dxTemplate="let data of 'content'">
+        <dx-data-grid [elementAttr]="{ id: gridId }" ophGridHeaderColor ophGridHeaderTextColor (onContentReady)="onContentReady($event)" [dataSource]="listDataSourceConditions" [allowColumnReordering]="true" [allowColumnResizing]="true" [hoverStateEnabled]="true"
+            [showColumnLines]="true" [showRowLines]="true" [showBorders]="true" [columnAutoWidth]="false" [height]="gridHeight">
+            <dxo-filter-row [visible]="true"></dxo-filter-row>
+            <dxo-header-filter [visible]="true"></dxo-header-filter>
+            <dxo-editing [allowUpdating]="true" [allowAdding]="true" [allowDeleting]="true" [useIcons]="true"></dxo-editing>
+
+            <dxi-column dataField="field" caption="Campo">
+
+                <dxo-lookup [dataSource]="listColumns" valueExpr="Name" [displayExpr]="setDisplay">
+                </dxo-lookup>
+                <dxi-validation-rule type="required" message="Requerido">
+                </dxi-validation-rule>
+            </dxi-column>
+            <dxi-column dataField="operator" caption="Operador">
+                <dxo-lookup [dataSource]="listOperator" valueExpr="value" displayExpr="text">
+                </dxo-lookup>
+                <dxi-validation-rule type="required" message="Requerido">
+                </dxi-validation-rule>
+            </dxi-column>
+            <dxi-column dataField="value" caption="Valor">
+                <dxi-validation-rule type="required" message="Requerido">
+                </dxi-validation-rule>
+            </dxi-column>
+            <dxi-column dataField="operatorUnion" caption="Operador de Unión">
+                <dxo-lookup [dataSource]="listOperatorUnion" valueExpr="value" displayExpr="text">
+                </dxo-lookup>
+                <dxi-validation-rule type="required" message="Requerido">
+                </dxi-validation-rule>
+            </dxi-column>
+        </dx-data-grid>
+    </div>
+</dx-popup>

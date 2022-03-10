@@ -1,0 +1,229 @@
+<app-tool-bar (itemClick)="itemClickToolbar($event)" [menu]="listActions"></app-tool-bar>
+
+<div class="config-main-form" [ngClass]="{'designer': showDesigner}">
+    <!-- Seleccion de tablas para configurar proyecto -->
+    <dx-form [elementAttr]="{ id: formId }" ophLabelColor ophSubTitleColor (onContentReady)="onContentReady($event)" *ngIf="!showDesigner" [formData]="mainForm" [showColonAfterLabel]="false" [colCount]="4" [minColWidth]="300" [labelLocation]="'top'" validationGroup="mainFormData">
+
+        <dxi-item caption="Diseñador" itemType="group" [colCount]="2" [colSpan]="3">
+
+            <dxi-item [colSpan]="2">
+                <dx-data-grid [elementAttr]="{ id: gridId }" ophGridHeaderColor ophGridHeaderTextColor (onContentReady)="onContentReady($event)" [height]='gridHeightTables' (onRowDblClick)="onRowDblClickTables($event)" [dataSource]="listTables" [allowColumnReordering]="true"
+                    [allowColumnResizing]="true" [hoverStateEnabled]="true" [showColumnLines]="true" [showRowLines]="true" [showBorders]="true" [columnAutoWidth]="false">
+                    <dxo-export [enabled]="true" fileName="TablesTable" [allowExportSelectedData]="true">
+                    </dxo-export>
+                    <dxo-filter-row [visible]="true"></dxo-filter-row>
+                    <dxo-header-filter [visible]="true"></dxo-header-filter>
+                    <dxo-selection mode="single"></dxo-selection>
+                    <dxo-paging [pageSize]="10"></dxo-paging>
+                    <dxo-pager [showPageSizeSelector]="true" [allowedPageSizes]="[5, 10, 20]" [showInfo]="true">
+                    </dxo-pager>
+                    <dxo-column-fixing [enabled]="true"></dxo-column-fixing>
+                    <dxi-column caption="Tabla" dataField="Name"></dxi-column>
+                    <dxi-column [width]="100" caption="Previsualizar" cellTemplate="cellTemplate" [allowFixing]="true">
+                    </dxi-column>
+                    <div *dxTemplate="let row of 'cellTemplate'" class="text-center">
+                        <span>
+                            <i class="dx-icon-preferences pointer" (click)="previsualizationForm(row)"
+                                aria-hidden="true"></i>
+                        </span>
+                    </div>
+                </dx-data-grid>
+            </dxi-item>
+
+        </dxi-item>
+
+        <dxi-item caption="Conexión" itemType="group" [colCount]="1" [colSpan]="1">
+            <dxi-item>
+                <dx-toolbar [items]="itemsToolbarConnection">
+                </dx-toolbar>
+            </dxi-item>
+            <dxi-item dataField="Connection.Name" [editorOptions]="{readOnly:true }">
+                <dxo-label text="Nombre">
+                </dxo-label>
+            </dxi-item>
+            <dxi-item dataField="Connection.HostName" [editorOptions]="{readOnly:true }">
+                <dxo-label text="Servidor">
+                </dxo-label>
+            </dxi-item>
+            <dxi-item dataField="Connection.DataBaseName" [editorOptions]="{readOnly:true }">
+                <dxo-label text="Base de Datos">
+                </dxo-label>
+            </dxi-item>
+        </dxi-item>
+    </dx-form>
+    <!-- Fin Seleccion de tablas para configurar proyecto -->
+
+    <!-- Visualizador de formulario -->
+    <div id="tabs">
+        <div class="row" *ngIf="showDesigner">
+            <div class="col-md-12 animated fadeIn fast">
+                <br>
+                <ngb-tabset [destroyOnHide]="false">
+                    <!-- Tab Vista Previa Formulario -->
+                    <ngb-tab id="form" title="Vista Previa Formulario">
+                        <ng-template ngbTabContent>
+                            <br>
+                            <div class="row">
+                                <div class="col-md-9 animated fadeIn fast">
+                                    <dx-form [elementAttr]="{ id: formId }" ophLabelColor ophSubTitleColor (onContentReady)="onContentReady($event)" [scrollingEnabled]="true" #formDesigner *ngIf="visualizeForm" (onInitialized)="onInitialized($event)" id="form" [showColonAfterLabel]="false"
+                                        [minColWidth]="300" labelLocation="top" [height]='400'>
+
+                                    </dx-form>
+                                </div>
+                                <div class="col-md-3 animated fadeIn fast">
+                                    <dx-scroll-view [height]="heightScroll">
+                                        <app-form-properties [mainForm]="mainForm" [listFormEventData]="listFormEventData" [listItemsForm]="listItemsForm"></app-form-properties>
+                                        <!-- Propiedades de Controles Form -->
+                                        <app-controls-properties  [connectionId]="mainForm.ConnectionId" [tableName]="mainForm.TableName" [editMode]="editMode" [listPrimaryKeysFormEdit]="listPrimaryKeys" [listItemsFormEdit]="listItemsForm" [listItemsDataSourceFormEdit]="listItemsDataSource"
+                                            (items)="getItems($event)" (itemsKeys)="listPrimaryKeys = $event" [listEventData]="listEventData" [mainFormTabs]="listTabs"></app-controls-properties>
+                                    </dx-scroll-view>
+                                </div>
+                            </div>
+                        </ng-template>
+                    </ngb-tab>
+                    <!-- Tab Vista previa rejilla -->
+                    <ngb-tab id="grid" title="Vista Previa Rejilla">
+                        <ng-template ngbTabContent>
+                            <br>
+                            <div class="row">
+                                <div class="col-md-9 animated fadeIn fast">
+                                    <dx-data-grid [elementAttr]="{ id: gridPreviewId }" ophGridHeaderColor ophGridHeaderTextColor (onContentReady)="onContentReady($event)" [allowColumnResizing]="false" #gridPreview (onContentReady)='onContentReadyGridPreview($event)' [allowColumnReordering]="true"
+                                        [allowColumnResizing]="true" [hoverStateEnabled]="true" [showColumnLines]="true" [showRowLines]="true" [showBorders]="true" [height]="gridHeightTables" [columnAutoWidth]="true">
+                                    </dx-data-grid>
+                                </div>
+                                <!-- Propiedades Grid -->
+
+                                <div class="col-md-3 animated fadeIn fast">
+                                    <dx-scroll-view [height]="heightScroll">
+                                        <app-grid-main-properties [metadataGrid]="metadataGrid" (getConditions)="getConditions($event)" [conditions]="metadataGrid?.conditions" [tableName]="mainForm.TableName" [connection]="mainForm.Connection"></app-grid-main-properties>
+                                        <app-grid-properties (columns)="getColumns($event)" [editMode]="editMode" [metadataGridForEdit]="metadataGrid" [tableName]="mainForm.TableName" [connection]="mainForm.Connection"></app-grid-properties>
+                                    </dx-scroll-view>
+                                </div>
+                            </div>
+                        </ng-template>
+                    </ngb-tab>
+                </ngb-tabset>
+            </div>
+        </div>
+    </div>
+
+
+</div>
+
+<!-- Popup Conexiones -->
+<dx-popup [elementAttr]="{ id: popUpConnectionsId }" ophTitleColor ophTitleTextColor ophPrimaryButtonColor ophPrimaryButtonTextColor ophSecundaryButtonColor ophSecundaryButtonTextColor (onContentReady)="onContentReady($event)" (onHidden)="onHiddenConnections($event)"
+    title="Configuración Conexión" [(visible)]="showPopup" width="800" [minHeight]="'auto'" [toolbarItems]="toolbarItemsConnectionPopup" [height]="conectionHeight" [showTitle]="true" [dragEnabled]="false" [closeOnOutsideClick]="false">
+    <div *dxTemplate="let data of 'content'">
+        <ngb-tabset #tabsConnection id="tabsConnection" [destroyOnHide]="false" (tabChange)="onTabChangeConnection($event)">
+            <ngb-tab id="listConnection" title="Seleccionar Conexión">
+                <ng-template ngbTabContent>
+                    <div class="animated fadeIn fast">
+                        <br>
+                        <dx-data-grid [elementAttr]="{ id: gridConnectionsId }" ophGridHeaderColor ophGridHeaderTextColor (onContentReady)="onContentReady($event)" [dataSource]="listConections" [allowColumnReordering]="true" [allowColumnResizing]="true" [hoverStateEnabled]="true"
+                            [showColumnLines]="true" [showRowLines]="true" [showBorders]="true" [columnAutoWidth]="true" [height]='gridHeight' (onToolbarPreparing)="onToolbarPreparing($event)" (onRowClick)="onRowClickConnections($event)" [loadPanel]="{enabled:true}"
+                            (onRowDblClick)="onRowDblClickConnections($event)">
+                            <dxo-export [enabled]="true" fileName="ServicesTable" [allowExportSelectedData]="true">
+                            </dxo-export>
+                            <dxo-filter-row [visible]="true"></dxo-filter-row>
+                            <dxo-header-filter [visible]="true"></dxo-header-filter>
+                            <dxo-selection mode="single"></dxo-selection>
+                            <dxo-paging [pageSize]="10"></dxo-paging>
+                            <dxo-pager [showPageSizeSelector]="true" [allowedPageSizes]="[5, 10, 20]" [showInfo]="true">
+                            </dxo-pager>
+
+
+                            <dxi-column [allowSearch]="false" caption="Proveedor" dataField="ProviderType">
+                                <dxo-lookup [dataSource]="listProviders" displayExpr="label" valueExpr="id">
+                                </dxo-lookup>
+                            </dxi-column>
+                            <dxi-column caption="Nombre" dataField="Name"></dxi-column>
+                            <dxi-column caption="Servidor" dataField="HostName"></dxi-column>
+                            <dxi-column caption="Base de Datos" dataField="DataBaseName"></dxi-column>
+
+                            <dxi-column type="buttons" [width]="100">
+                                <dxi-button [name]="'edit'" [icon]="'dx-icon-edit pointer'" [visible]="true" [onClick]="editConnection"></dxi-button>
+                                <dxi-button [name]="'delete'" [icon]="'dx-icon-trash pointer'" [visible]="true" [onClick]="deleteConnection"></dxi-button>
+                            </dxi-column>
+                        </dx-data-grid>
+                    </div>
+                </ng-template>
+            </ngb-tab>
+
+            <ngb-tab id="formConnection" title="Propiedades de la Conexión">
+                <ng-template ngbTabContent>
+                    <div class="animated fadeIn fast">
+                        <br>
+                        <dx-form [elementAttr]="{ id: formConnectionsId }" ophLabelColor ophSubTitleColor (onContentReady)="onContentReady($event)" #formConnection id="form" [formData]="connection" [showColonAfterLabel]="false" [colCount]="3" labelLocation="top" validationGroup="connectionData"
+                            [height]="gridHeight">
+
+                            <dxi-item dataField="ProviderType" editorType="dxSelectBox" [editorOptions]="{ dataSource: listProviders, displayExpr: 'label', valueExpr: 'id', searchEnabled: false, onValueChanged: onValueChangedProvider, valueChangeEvent: 'change' }">
+                                <dxo-label text="Proveedor">
+                                </dxo-label>
+                                <dxi-validation-rule type="required" message="requerido">
+                                </dxi-validation-rule>
+                            </dxi-item>
+
+                            <dxi-item dataField="Name" [editorOptions]="{maxLength:'150' }">
+                                <dxo-label text="Nombre">
+                                </dxo-label>
+                                <dxi-validation-rule type="required" message="Requerido">
+                                </dxi-validation-rule>
+                            </dxi-item>
+                            <dxi-item dataField="HostName" [editorOptions]="{maxLength:'150' }">
+                                <dxo-label text="Servidor">
+                                </dxo-label>
+                                <dxi-validation-rule type="required" message="Requerido">
+                                </dxi-validation-rule>
+                            </dxi-item>
+                            <dxi-item *ngIf="connection.ProviderType===1" dataField="DataBaseName" [editorOptions]="{maxLength:'150' }">
+                                <dxo-label text="Base de Datos">
+                                </dxo-label>
+                                <dxi-validation-rule type="required" message="Requerido">
+                                </dxi-validation-rule>
+                            </dxi-item>
+                            <dxi-item dataField="UserName" [editorOptions]="{maxLength:'100' }">
+                                <dxo-label text="Nombre de Usuario">
+                                </dxo-label>
+                                <dxi-validation-rule type="required" message="Requerido">
+                                </dxi-validation-rule>
+                            </dxi-item>
+                            <dxi-item dataField="Password" [editorOptions]="{maxLength:'50' ,mode:'password' }">
+                                <dxo-label text="Contraseña">
+                                </dxo-label>
+                                <dxi-validation-rule type="required" message="Requerido">
+                                </dxi-validation-rule>
+                            </dxi-item>
+                            <dxi-item *ngIf="connection.ProviderType===2" [label]="{text: 'Puerto'}" dataField="Port" [editorOptions]="{maxLength:'20' }">
+                                <dxi-validation-rule type="required" message="Requerido">
+                                </dxi-validation-rule>
+                            </dxi-item>
+                            <dxi-item *ngIf="connection.ProviderType===2" dataField="Sid" editorType="dxSelectBox" [editorOptions]="{ dataSource: listConectionsOracle, displayExpr: 'label', valueExpr: 'id', searchEnabled: false }">
+                                <dxo-label text="Tipo de Conexión">
+                                </dxo-label>
+                                <dxi-validation-rule type="required" message="requerido">
+                                </dxi-validation-rule>
+                            </dxi-item>
+                            <dxi-item *ngIf="connection.ProviderType===2" dataField="ServiceName" [editorOptions]="{maxLength:'500' }">
+                                <dxo-label text="Nombre Tipo de Conexión">
+                                </dxo-label>
+                                <dxi-validation-rule type="required" message="Requerido">
+                                </dxi-validation-rule>
+                            </dxi-item>
+                            <dxi-item *ngIf="connection.ProviderType===2" [label]="{text: 'Protocolo'}" dataField="Protocol" [editorOptions]="{maxLength:'20' }">
+                                <dxi-validation-rule type="required" message="Requerido">
+                                </dxi-validation-rule>
+                            </dxi-item>
+                        </dx-form>
+                    </div>
+                </ng-template>
+            </ngb-tab>
+
+        </ngb-tabset>
+    </div>
+
+</dx-popup>
+<!-- Fin Popup Conexiones -->
+
+
+<dx-load-panel #loadPanel shadingColor="rgba(0,0,0,0.4)" [position]="{ of: '#tabs' }" [(visible)]="loadingVisible" [showIndicator]="true" [showPane]="true" [shading]="true" [closeOnOutsideClick]="false">
+</dx-load-panel>

@@ -1,0 +1,26 @@
+.input-group-addon {
+    border-radius: 0 !important;
+}
+
+h1,
+.h1 {
+    font-size: 17px;
+}
+
+::ng-deep .dx-form-group-caption {
+    font-size: 15px !important;
+}
+
+::ng-deep .select-item {
+    border-style: dashed !important;
+    border-color: #a3a3a3;
+    border-width: thin;
+}
+
+::ng-deep .dx-accordion-item {
+    border: 0px;
+}
+
+::ng-deep .dx-accordion-item:last-child {
+    border: 0px;
+}

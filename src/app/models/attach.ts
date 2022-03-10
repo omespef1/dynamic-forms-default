@@ -1,0 +1,35 @@
+export class Attach {
+    rad_cont: number;
+    rad_tabl: string;
+    pro_codi: string;
+    rad_llav: string;
+    ter_codi: number;
+    ite_grup: number;
+    ite_cate: number;
+    arb_tipo: number;
+    ter_orig: number;
+    rad_cori: string;
+    ter_dest: number;
+    rad_cdes: string;
+    reg_cont: number;
+    rad_desc: string;
+    rad_fdoc?: Date;
+    rad_frec?: Date;
+    rad_obse: string;
+    rad_orig: number;
+    cas_cont: number;
+    rad_ndoc: string;
+    ter_cono: string;
+    ite_cono_g: string;
+    ite_cono_c: string;
+    arb_cono: string;
+    ter_cono_o: string;
+    ter_cono_d: string;
+    top_cono: string;
+    reg_nume: number;
+    reg_fech?: Date;
+    rad_fdoo?: Date;
+    rad_freo?: Date;
+    rad_deso: string;
+    arb_cpno: string;
+}

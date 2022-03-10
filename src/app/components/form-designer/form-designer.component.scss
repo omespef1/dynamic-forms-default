@@ -1,0 +1,30 @@
+.config-main-form {
+    padding: 20px;
+    min-height: 92%;
+    a {
+        text-decoration: none;
+    }
+    .frmState {
+        margin-bottom: 10px;
+    }
+    button {
+        background-color: transparent;
+    }
+}
+
+.designer {
+    padding-top: 0px;
+}
+
+h1,
+.h1 {
+    font-size: 1.2rem;
+}
+
+::ng-deep .dx-form-group-caption {
+    font-size: 20px !important;
+}
+
+::ng-deep .dx-list-item-content {
+    font-family: 'FontAwesome', 'Helvetica Neue', 'Segoe UI', 'Helvetica', 'Verdana', 'sans-serif' !important;
+}

@@ -1,0 +1,201 @@
+<dx-accordion id="propertiesGrid" [(selectedIndex)]="selectedIndex" [dataSource]="listItems" [collapsible]="true" [multiple]="true" [animationDuration]="300">
+
+    <div *dxTemplate="let item of 'title'">
+        <h1>{{item.text}}</h1>
+    </div>
+    <div *dxTemplate="let item of 'item'">
+        <dx-form *ngIf="item.value===1" id="form" [showColonAfterLabel]="false" [colCount]="1" labelLocation="left" validationGroup="propertyData" [minColWidth]="250">
+
+            <dxi-item *ngIf="listColumns">
+                <dx-list [pageLoadMode]="'nextButton'" [dataSource]="listColumns" height="auto" [selectionMode]="'single'" (onItemReordered)="onItemReordered($event)" (onItemClick)="onItemClick($event)" [searchEnabled]="true" searchExpr="Name" searchMode="contains"
+                    (onContentReady)="onContentReadyPropertiesGrid($event)" keyExpr='Id' displayExpr="DataField">
+                    <dxo-item-dragging [allowReordering]="allowItemReordering">
+
+                    </dxo-item-dragging>
+                    <div *dxTemplate="let item of 'item'" class="cls{{item.Id}}">
+                        <div class="product">
+                            {{item.DataField}}
+                            <dx-tooltip target=".cls{{item.Id}}" showEvent="mouseenter" hideEvent="mouseleave" position="top">
+                                <div *dxTemplate="let data = data of 'content'">
+                                    {{item.DataField}}
+                                </div>
+                            </dx-tooltip>
+                        </div>
+                    </div>
+                </dx-list>
+            </dxi-item>
+        </dx-form>
+        <dx-toolbar [disabled]="!propertyGrid.dataField" *ngIf="item.value===2" [items]="itemsToolbar">
+        </dx-toolbar>
+        <br>
+        <dx-form [elementAttr]="{ id: formId }" ophLabelColor ophSubTitleColor (onContentReady)="onContentReady($event)" *ngIf="item.value===2 && refreshItems" [formData]="propertyGrid" id="form" [showColonAfterLabel]="false" [colCount]="1" labelLocation="top"
+            validationGroup="propertyData" [minColWidth]="300" [height]="heightForm">
+            <dxi-item>
+                <dxo-label text="Etiqueta">
+                </dxo-label>
+                <dx-text-box [(value)]="propertyGrid.dataField" [maxLength]="150" [readOnly]="false">
+                </dx-text-box>
+            </dxi-item>
+            <dxi-item>
+                <dxo-label text="Tamaño">
+                </dxo-label>
+                <dx-text-box [(value)]="propertyGrid.width" [maxLength]="10">
+                </dx-text-box>
+            </dxi-item>
+            <dxi-item>
+                <dxo-label text="Alineación">
+                </dxo-label>
+                <dx-select-box [dataSource]="listOptionsAligment" valueExpr="value" displayExpr="text" [(value)]="propertyGrid.alignment">
+                </dx-select-box>
+            </dxi-item>
+            <dxi-item>
+                <dxo-label text="Visible">
+                </dxo-label>
+                <dx-select-box [dataSource]="listOptions" valueExpr="value" displayExpr="text" [(value)]="propertyGrid.visible">
+                </dx-select-box>
+            </dxi-item>
+            <dxi-item>
+                <dxo-label text="Formato">
+                </dxo-label>
+                <dx-select-box [readOnly]="propertyGrid.iskey" [dataSource]="listFormats" valueExpr="value" displayExpr="text" [(value)]="propertyGrid.format" [showClearButton]="true" (onValueChanged)="onValueChangedFormat($event)">
+                </dx-select-box>
+            </dxi-item>
+            <dxi-item>
+                <dxo-label text="Permitir Editar">
+                </dxo-label>
+                <dx-select-box [dataSource]="listOptions" valueExpr="value" [readOnly]="setAllowEditing()" displayExpr="text" [(value)]="propertyGrid.allowEditing">
+                </dx-select-box>
+            </dxi-item>
+            <dxi-item>
+                <dxo-label text="Permitir Agrupar">
+                </dxo-label>
+                <dx-select-box [dataSource]="listOptions" valueExpr="value" displayExpr="text" [(value)]="propertyGrid.allowGrouping">
+                </dx-select-box>
+            </dxi-item>
+            <dxi-item>
+                <dxo-label text="Permitir Filtrar">
+                </dxo-label>
+                <dx-select-box [dataSource]="listOptions" valueExpr="value" displayExpr="text" [(value)]="propertyGrid.allowHeaderFiltering">
+                </dx-select-box>
+            </dxi-item>
+            <dxi-item>
+                <dxo-label text="Permitir Ocultar">
+                </dxo-label>
+                <dx-select-box [dataSource]="listOptions" valueExpr="value" displayExpr="text" [(value)]="propertyGrid.allowHiding">
+                </dx-select-box>
+            </dxi-item>
+            <dxi-item>
+                <dxo-label text="Permitir Ajustar">
+                </dxo-label>
+                <dx-select-box [dataSource]="listOptions" valueExpr="value" displayExpr="text" [(value)]="propertyGrid.allowResizing">
+                </dx-select-box>
+            </dxi-item>
+            <dxi-item>
+                <dxo-label text="Permitir Buscar">
+                </dxo-label>
+                <dx-select-box [dataSource]="listOptions" valueExpr="value" displayExpr="text" [(value)]="propertyGrid.allowSearch">
+                </dx-select-box>
+            </dxi-item>
+            <dxi-item>
+                <dxo-label text="Permitir Ordenar">
+                </dxo-label>
+                <dx-select-box [dataSource]="listOptions" valueExpr="value" displayExpr="text" [(value)]="propertyGrid.allowSorting">
+                </dx-select-box>
+            </dxi-item>
+            <dxi-item>
+                <dxo-label text="Data Source"> </dxo-label>
+                <div class="d-flex">
+                    <dx-text-box [readOnly]="true" [value]="totalItemsDataSource" [width]="'100%'">
+                    </dx-text-box>
+                    <span *ngIf="!propertyGrid.iskey" title="Establecer Datasource" class="input-group-addon pointer" (click)="onShowPopupDataSource()">
+              <i class="fas fa-database" aria-hidden="true"></i>
+            </span>
+                </div>
+            </dxi-item>
+            <dxi-item *ngIf="connection.ProviderType === 1">
+                <dxo-label text="Columnas Agrupadas"> </dxo-label>
+                <div class="d-flex">
+                    <dx-text-box [readOnly]="true" [value]="totalColumnsGroup" [width]="'100%'">
+                    </dx-text-box>
+                    <span title="Agrupar Columnas" *ngIf="!propertyGrid.iskey && propertyGrid.columnGridGroup.length===0" class="input-group-addon pointer" (click)="onShowPopupGroupColumns()">
+              <i class="fas fa-link" aria-hidden="true"></i>
+            </span>
+                    <span title="Desagrupar Columnas" *ngIf="propertyGrid.columnGridGroup.length>0" class="input-group-addon pointer" (click)="unGroupColumns()">
+              <i class="fas fa-unlink" aria-hidden="true"></i>
+            </span>
+                </div>
+            </dxi-item>
+
+        </dx-form>
+
+    </div>
+</dx-accordion>
+
+<dx-load-panel shadingColor="rgba(0,0,0,0.4)" [position]="{ of: '#propertiesGrid' }" [(visible)]="showLoadPanel" [showIndicator]="true" [showPane]="true" [shading]="true" [closeOnOutsideClick]="false">
+</dx-load-panel>
+
+<dx-popup [elementAttr]="{ id: popUpId }" ophTitleColor ophTitleTextColor ophPrimaryButtonColor ophPrimaryButtonTextColor ophSecundaryButtonColor ophSecundaryButtonTextColor (onContentReady)="onContentReady($event)" title="Data Source" *ngIf="showPopup"
+    [(visible)]="showPopup" [fullScreen]="true" [toolbarItems]="toolbarItemsDataSource" [showTitle]="true" [dragEnabled]="false" [closeOnOutsideClick]="false">
+
+    <div *dxTemplate="let data of 'content'">
+
+        <dx-data-grid [elementAttr]="{ id: gridId }" ophGridHeaderColor ophGridHeaderTextColor (onContentReady)="onContentReady($event)" [dataSource]="dataSource" [allowColumnReordering]="true" [allowColumnResizing]="true" [hoverStateEnabled]="true" [showColumnLines]="true"
+            [showRowLines]="true" [showBorders]="true" [columnAutoWidth]="false" [height]="'auto'">
+            <dxo-paging [pageSize]="10"></dxo-paging>
+            <dxo-pager [showPageSizeSelector]="true" [allowedPageSizes]="[5, 10, 20]" [showInfo]="true">
+            </dxo-pager>
+            <dxo-editing [allowAdding]="true" [allowDeleting]="true" [useIcons]="true"></dxo-editing>
+
+            <dxi-column [width]="200" caption="Id" dataField="id">
+                <dxi-validation-rule type="required" message="Requerido">
+                </dxi-validation-rule>
+            </dxi-column>
+            <dxi-column caption="Nombre" dataField="text">
+                <dxi-validation-rule type="required" message="Requerido">
+                </dxi-validation-rule>
+            </dxi-column>
+        </dx-data-grid>
+
+    </div>
+</dx-popup>
+
+<dx-popup [elementAttr]="{ id: popUpId }" ophTitleColor ophTitleTextColor ophPrimaryButtonColor ophPrimaryButtonTextColor ophSecundaryButtonColor ophSecundaryButtonTextColor (onContentReady)="onContentReady($event)" title="Agrupar columnas" *ngIf="showPopupGroupColumns"
+    [(visible)]="showPopupGroupColumns" [toolbarItems]="toolbarItemsColumnsGroup" width="800" [minHeight]="500" [height]="popupHeight" [showTitle]="true" [dragEnabled]="false" [closeOnOutsideClick]="false">
+
+    <div *dxTemplate="let data of 'content'">
+
+        <div class="row">
+            <div class="col-md-5">
+                <dx-list #listUpgroup (onItemClick)="onItemClickGroup($event)" [dataSource]="listColumnsUngroup" [height]="gridHeight" [selectionMode]="'single'">
+                    <div *dxTemplate="let data of 'item'">
+                        <div>{{data?.Name}}</div>
+                    </div>
+                </dx-list>
+            </div>
+            <div class="col-md-2">
+                <dx-form id="formButtons" [showColonAfterLabel]="false" [colCount]="1" labelLocation="left" [minColWidth]="300" [height]="500">
+                    <dxi-item>
+                        <dx-button (onClick)="onClickGroupAll()" [text]="'>>'"></dx-button>
+                    </dxi-item>
+                    <dxi-item>
+                        <dx-button (onClick)="onClickGroup()" [text]="'&nbsp;>&nbsp;'"></dx-button>
+                    </dxi-item>
+                    <dxi-item>
+                        <dx-button (onClick)="onClickUngroup()" [text]="'&nbsp;<&nbsp;'"></dx-button>
+                    </dxi-item>
+                    <dxi-item>
+                        <dx-button (onClick)="onClickUngroupAll()" [text]="'<<'"></dx-button>
+                    </dxi-item>
+                </dx-form>
+            </div>
+            <div class="col-md-5">
+                <dx-list #listGroup (onItemClick)="onItemClickUngroup($event)" [dataSource]="listColumnsGroup" [height]="gridHeight" [selectionMode]="'single'">
+                    <div *dxTemplate="let data of 'item'">
+                        <div>{{data?.Name}}</div>
+                    </div>
+                </dx-list>
+            </div>
+        </div>
+
+    </div>
+</dx-popup>

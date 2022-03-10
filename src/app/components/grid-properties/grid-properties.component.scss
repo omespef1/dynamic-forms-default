@@ -1,0 +1,20 @@
+.input-group-addon {
+    border-radius: 0 !important
+}
+
+h1,
+.h1 {
+    font-size: 17px;
+}
+
+::ng-deep .dx-form-group-caption {
+    font-size: 15px !important;
+}
+
+::ng-deep .select-item {
+    border-style: dotted !important;
+}
+
+::ng-deep #formButtons {
+    padding-top: 160px;
+}

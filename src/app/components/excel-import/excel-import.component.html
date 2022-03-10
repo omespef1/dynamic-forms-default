@@ -1,0 +1,13 @@
+<dx-popup [elementAttr]="{ id: popUpId }" ophTitleColor ophTitleTextColor ophPrimaryButtonColor ophPrimaryButtonTextColor ophSecundaryButtonColor ophSecundaryButtonTextColor (onContentReady)="onContentReady($event)" title="Importar Excel" *ngIf="showPopup"
+    [(visible)]="showPopup" width="70%" [height]="popupHeight" [showTitle]="true" [dragEnabled]="false" [closeOnOutsideClick]="false" [toolbarItems]="toolbarItemsPopup" [showCloseButton]="false">
+    <div *dxTemplate="let data of 'content'">
+
+        <dx-data-grid [elementAttr]="{ id: gridId }" ophGridHeaderColor ophGridHeaderTextColor (onContentReady)="onContentReady($event)" (onToolbarPreparing)="onToolbarPreparingGrid($event)" #grid height="100%" [dataSource]="listItems" [allowColumnReordering]="true"
+            [allowColumnResizing]="true" [hoverStateEnabled]="true" [showColumnLines]="true" [showRowLines]="true" [showBorders]="true" [columnAutoWidth]="false">
+
+            <dxo-export [enabled]="true" fileName="DataImport"></dxo-export>
+        </dx-data-grid>
+    </div>
+</dx-popup>
+
+<input #inputImport style="display: none;" (change)="changeFile($event)" type='file' id="excelImport" accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel" />

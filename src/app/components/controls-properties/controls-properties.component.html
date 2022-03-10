@@ -1,0 +1,953 @@
+<ngb-tabset #tabSettings id="properties" [destroyOnHide]="false">
+    <ngb-tab id="propertiesTab">
+        <ng-template ngbTabTitle>
+            <span ngbTooltip="Propiedades"><i class="fas fa-list" aria-hidden="true"></i></span>
+        </ng-template>
+        <ng-template ngbTabContent>
+            <br />
+            <dx-accordion [(selectedIndex)]="selectedIndex" [dataSource]="listItems" [focusStateEnabled]="false" [collapsible]="true" [multiple]="true" [animationDuration]="300">
+
+                <div *dxTemplate="let item of 'title'">
+                    <h1 ophLabelColor>{{ item.text }}</h1>
+                </div>
+                <div *dxTemplate="let item of 'item'">
+                    <dx-form [elementAttr]="{ id: formId }" ophLabelColor ophSubTitleColor (onContentReady)="onContentReady($event)" *ngIf="item.value === 1" height="auto" [formData]="property" id="form" [showColonAfterLabel]="false" [colCount]="1" labelLocation="top" validationGroup="propertyData"
+                        [minColWidth]="250">
+                        <dxi-item *ngIf="listColumns">
+                            <dx-scroll-view showScrollbar="onScroll" [height]="'90%'">
+                                <dx-list [pageLoadMode]="'scrollBottom'" [dataSource]="listColumns" [height]="200" [selectionMode]="'single'" (onItemReordered)="onItemReordered($event)" (onItemClick)="onItemClick($event)" [searchEnabled]="true" searchExpr="Name" searchMode="contains"
+                                    (onContentReady)="onContentReadyProperties($event)" keyExpr='Id' displayExpr="Name">
+                                    <dxo-item-dragging [allowReordering]="allowItemReordering">
+
+                                    </dxo-item-dragging>
+                                </dx-list>
+                            </dx-scroll-view>
+                        </dxi-item>
+                    </dx-form>
+                    <dx-toolbar [disabled]="!property.dataField" *ngIf="item.value === 2" [items]="itemsToolbar">
+                    </dx-toolbar>
+                    <br />
+                      
+                    <dx-form [elementAttr]="{ id: formId }" ophLabelColor ophSubTitleColor (onContentReady)="onContentReady($event)" *ngIf="item.value === 2 && foreignKey && refreshItems" [formData]="property" id="formForeignKey" [showColonAfterLabel]="false" [colCount]="1"
+                        labelLocation="top" validationGroup="propertyData" [minColWidth]="300" [height]="heightFormForeignKey">
+                        <dxi-item caption="Llave Foránea" itemType="group" [colCount]="1" [colSpan]="1">
+                            <dxi-item>
+                                <dxo-label text="Campo"> </dxo-label>
+                                <dx-text-box [value]="foreignKeyDataField" [readOnly]="true" [maxLength]="150">
+                                </dx-text-box>
+                            </dxi-item>
+                            <dxi-item>
+                                <dxo-label text="Referencia"> </dxo-label>
+                                <dx-text-box [(value)]="property.tableNameForeignKey" [readOnly]="true">
+                                </dx-text-box>
+                            </dxi-item>
+                            <dxi-item>
+                                <dxo-label text="Campo Referencia"> </dxo-label>
+                                <dx-text-box [value]="property.valueMemberForeignKey" [hint]="property.valueMemberForeignKey" [readOnly]="true" [maxLength]="550">
+                                </dx-text-box>
+                            </dxi-item>
+                            <!-- <dxi-item>
+                                <dxo-label text="Etiqueta"> </dxo-label>
+                                <dx-text-box [(value)]="property.label.text" [maxLength]="150">
+                                </dx-text-box>
+                            </dxi-item> -->
+                            <!-- <dxi-item>
+                                <dxo-label text="Valor por Defecto"> </dxo-label>
+                                <dx-text-box [readOnly]="true" (onFocusIn)="onShowPopupDefaultValue()" [value]="property.editorOptions.value">
+                                </dx-text-box>
+                            </dxi-item> -->
+                            <dxi-item *ngIf="property.dataField !== 'FKEMP_CODI' || tableName === 'GN_USUAR' || tableName === 'GN_REMGU'">
+                                <dxo-label text="Configuración Buscador"> </dxo-label>
+                                <dx-text-box [readOnly]="true" (onFocusIn)="openPopupConfigSearch()" [maxLength]="500">
+                                </dx-text-box>
+                            </dxi-item>
+                            <!-- <dxi-item>
+                                <dxo-label text="Columnas"> </dxo-label>
+                                <dx-select-box [dataSource]="listColSpan" valueExpr="value" displayExpr="text" [(value)]="property.colSpan">
+                                </dx-select-box>
+                            </dxi-item>
+                            <dxi-item>
+                                <dxo-label text="Requerido"> </dxo-label>
+                                <dx-select-box [dataSource]="listOptions" valueExpr="value" displayExpr="text" (onValueChanged)="onValueChangedRequired($event)" [readOnly]="readonly" [(value)]="requerid">
+                                </dx-select-box>
+                            </dxi-item>
+                            <dxi-item>
+                                <dxo-label text="Visible"> </dxo-label>
+                                <dx-select-box [dataSource]="listOptions" valueExpr="value" displayExpr="text" [readOnly]="readonly" [(value)]="property.visible">
+                                </dx-select-box>
+                            </dxi-item> -->
+                            <!-- <dxi-item>
+                                <dxo-label text="Tooltip"> </dxo-label>
+                                <dx-text-box [(value)]="property.editorOptions.hint" [maxLength]="250">
+                                </dx-text-box>
+                            </dxi-item> -->
+                            <!-- <dxi-item>
+                                <dxo-label text="Color de Etiqueta"> </dxo-label>
+                                <dx-color-box [width]="'100%'" [(value)]="inputAttr.background_color_label" (onValueChanged)="onValueChangedLabelColor($event)">
+                                    <dxi-button name="dropDown" location="after"></dxi-button>
+                                    <dxi-button *ngIf="inputAttr.background_color_label" name="removeLabelColor" location="after" [options]="buttonRemoveLabelColor"></dxi-button>
+                                </dx-color-box>
+                            </dxi-item> -->
+                            <!-- <dxi-item>
+                                <dxo-label text="Color de Fondo"> </dxo-label>
+                                <dx-color-box [width]="'100%'" [(value)]="inputAttr.background_color">
+                                    <dxi-button name="dropDown" location="after"></dxi-button>
+                                    <dxi-button *ngIf="inputAttr.background_color" name="removeBackgroundColor" location="after" [options]="buttonRemoveBackgroundColor"></dxi-button>
+                                </dx-color-box>
+                            </dxi-item> -->
+                            <!-- <dxi-item>
+                                <dxo-label text="Tipo de Fuente"> </dxo-label>
+                                <dx-text-box placeholder="Establecer Fuente" [width]="'100%'" [readOnly]="true">
+                                    <dxi-button name="setFont" location="after" [options]="buttonSetFont">
+                                    </dxi-button>
+                                    <dxi-button *ngIf="showClearButtonFont()" name="removeFont" location="after" [options]="buttonRemoveFont"></dxi-button>
+                                </dx-text-box>
+                            </dxi-item> -->
+                        </dxi-item>
+                    </dx-form>
+
+                    <dx-form [elementAttr]="{ id: formId }" ophLabelColor ophSubTitleColor (onContentReady)="onContentReady($event)" *ngIf="item.value === 2 && primaryKey && refreshItems" [formData]="keyData" id="formKey" [showColonAfterLabel]="false" [colCount]="1" labelLocation="top"
+                        validationGroup="keyData" [minColWidth]="300" [height]="heightFormKey">
+                        <br />
+
+                       
+                        <dxi-item caption="Llave Primaria" itemType="group" [colCount]="1" [colSpan]="1">
+                            <dxi-item>
+                                <dxo-label text="Campo"> </dxo-label>
+                                <dx-text-box [value]="keyData.Name" [readOnly]="true" [maxLength]="150">
+                                </dx-text-box>
+                            </dxi-item>
+                            <dxi-item>
+                                <dxo-label text="Tipo de Dato"> </dxo-label>
+                                <dx-text-box [value]="keyData.DataType" [readOnly]="true" [maxLength]="150">
+                                </dx-text-box>
+                            </dxi-item>
+                            <dxi-item>
+                                <dxo-label text="Autonumerico"> </dxo-label>
+                                <dx-select-box [dataSource]="listOptions" [readOnly]="true" valueExpr="value" displayExpr="text" [(value)]="keyData.IsIdentity">
+                                </dx-select-box>
+                            </dxi-item>
+                            <dxi-item *ngIf="listPrimaryKeys.length === 1 && keyData.DataType === 'varchar' && keyData.MaxLength >= 36">
+                                <dxo-label text="Identificador Unico"> </dxo-label>
+                                <dx-select-box (onValueChanged)="onValueChangedUniqueIdentifier($event)" [dataSource]="listOptions" valueExpr="value" displayExpr="text" [(value)]="keyData.IsGuid">
+                                </dx-select-box>
+                            </dxi-item>
+                            <dxi-item>
+                                <dxo-label text="Longitud"> </dxo-label>
+                                <dx-text-box [value]="keyData.MaxLength" [readOnly]="true" [maxLength]="150">
+                                </dx-text-box>
+                            </dxi-item>
+                            <dxi-item *ngIf="listPrimaryKeys.length > 1">
+                                <dxo-label text="Llave Compuesta"> </dxo-label>
+                                <dx-text-box value="Si" [readOnly]="true" [maxLength]="150">
+                                </dx-text-box>
+                            </dxi-item>
+                            <!-- <dxi-item>
+                                <dxo-label text="Color de Etiqueta"> </dxo-label>
+                                <dx-color-box [width]="'100%'" [(value)]="inputAttr.background_color_label" (onValueChanged)="onValueChangedLabelColor($event)">
+                                    <dxi-button name="dropDown" location="after"></dxi-button>
+                                    <dxi-button *ngIf="inputAttr.background_color_label" name="removeLabelColor" location="after" [options]="buttonRemoveLabelColor"></dxi-button>
+                                </dx-color-box>
+                            </dxi-item> -->
+                            <!-- <dxi-item>
+                                <dxo-label text="Color de Fondo"> </dxo-label>
+                                <dx-color-box [width]="'100%'" [(value)]="inputAttr.background_color">
+                                    <dxi-button name="dropDown" location="after"></dxi-button>
+                                    <dxi-button *ngIf="inputAttr.background_color" name="removeBackgroundColor" location="after" [options]="buttonRemoveBackgroundColor"></dxi-button>
+                                </dx-color-box>
+                            </dxi-item>
+                            <dxi-item>
+                                <dxo-label text="Tipo de Fuente"> </dxo-label>
+                                <dx-text-box placeholder="Establecer Fuente" [width]="'100%'" [readOnly]="true">
+                                    <dxi-button name="setFont" location="after" [options]="buttonSetFont">
+                                    </dxi-button>
+                                    <dxi-button *ngIf="showClearButtonFont()" name="removeFont" location="after" [options]="buttonRemoveFont"></dxi-button>
+                                </dx-text-box>
+                            </dxi-item> -->
+                        </dxi-item>
+                    </dx-form>
+
+                    <dx-form [elementAttr]="{ id: formId }" ophLabelColor ophSubTitleColor (onContentReady)="onContentReady($event)" #formGeneralProperties *ngIf="item.value === 2 && refreshItems" [formData]="property" id="form" [showColonAfterLabel]="false"
+                        [colCount]="1" labelLocation="top" validationGroup="propertyData" [minColWidth]="300" [height]="heightForm">                                           
+                        <dxi-item *ngIf="!property.isFileUpload" caption="Generales" itemType="group" [colCount]="1" [colSpan]="1">
+                            <dxi-item *ngIf="!primaryKey && !foreignKey">
+                                <dxo-label text="Campo"> </dxo-label>
+                                <dx-text-box [value]="property.dataField" [readOnly]="true" [maxLength]="150">
+                                </dx-text-box>
+                            </dxi-item>
+                            <dxi-item>
+                                <dxo-label text="Etiqueta"> </dxo-label>
+                                <dx-text-box [(value)]="property.label.text" [maxLength]="150">
+                                </dx-text-box>
+                            </dxi-item>
+                            <dxi-item>
+                                <dxo-label text="Valor por Defecto"> </dxo-label>
+                                <dx-text-box [readOnly]="true" (onFocusIn)="onShowPopupDefaultValue()" [value]="property.editorOptions.value">
+                                </dx-text-box>
+                            </dxi-item>
+                            <dxi-item>
+                                <dxo-label text="Columnas"> </dxo-label>
+                                <dx-select-box [dataSource]="listColSpan" valueExpr="value" displayExpr="text" [(value)]="property.colSpan">
+                                </dx-select-box>
+                            </dxi-item>
+                            <!-- <dxi-item>
+                                <dxo-label text="Pestaña"> {{property.tab}} </dxo-label>
+                                <dx-select-box placeholder="Seleccione pestaña" [dataSource]="listTabOptions" valueExpr="Id" displayExpr="Name" [(value)]="property.tab">
+                                </dx-select-box>
+                            </dxi-item> -->
+                            <dxi-item>
+                                <dxo-label text="Pestaña"> </dxo-label>
+                                <dx-select-box [dataSource]="listTabOptions"  valueExpr="Id" displayExpr="Name" [(value)]="property.tab" placeholder="Seleccione pestaña">
+                                </dx-select-box>
+                            </dxi-item>
+                            <dxi-item>
+                                <dxo-label text="Requerido"> </dxo-label>
+                                <dx-select-box [dataSource]="listOptions" valueExpr="value" displayExpr="text" (onValueChanged)="onValueChangedRequired($event)" [readOnly]="readonly" [(value)]="requerid">
+                                </dx-select-box>
+                            </dxi-item>
+                            <dxi-item>
+                                <dxo-label text="Visible"> </dxo-label>
+                                <dx-select-box [dataSource]="listOptions" valueExpr="value" displayExpr="text" [readOnly]="false" [(value)]="property.visible">
+                                </dx-select-box>
+                            </dxi-item>
+                            <dxi-item>
+                                <dxo-label text="Solo Lectura"> </dxo-label>
+                                <dx-select-box [dataSource]="listOptions" valueExpr="value" displayExpr="text" [(value)]="property.editorOptions.readOnly">
+                                </dx-select-box>
+                            </dxi-item>
+                            <dxi-item>
+                                <dxo-label text="Mostrar Limpiar Campo"> </dxo-label>
+                                <dx-select-box [dataSource]="listOptions" valueExpr="value" displayExpr="text" [(value)]="property.editorOptions.showClearButton">
+                                </dx-select-box>
+                            </dxi-item>
+                            <dxi-item>
+                                <dxo-label text="Tooltip"> </dxo-label>
+                                <dx-text-box [(value)]="property.editorOptions.hint" [maxLength]="250">
+                                </dx-text-box>
+                            </dxi-item>
+                            <dxi-item>
+                                <dxo-label text="Color de Etiqueta"> </dxo-label>
+                                <dx-color-box [width]="'100%'" [(value)]="inputAttr.background_color_label" (onValueChanged)="onValueChangedLabelColor($event)">
+                                    <dxi-button name="dropDown" location="after"></dxi-button>
+                                    <dxi-button *ngIf="inputAttr.background_color_label" name="removeLabelColor" location="after" [options]="buttonRemoveLabelColor"></dxi-button>
+                                </dx-color-box>
+                            </dxi-item>
+                            <dxi-item>
+                                <dxo-label text="Color de Fondo"> </dxo-label>
+                                <dx-color-box [width]="'100%'" [(value)]="inputAttr.background_color">
+                                    <dxi-button name="dropDown" location="after"></dxi-button>
+                                    <dxi-button *ngIf="inputAttr.background_color" name="removeBackgroundColor" location="after" [options]="buttonRemoveBackgroundColor"></dxi-button>
+                                </dx-color-box>
+                            </dxi-item>
+                            <dxi-item>
+                                <dxo-label text="Tipo de Fuente"> </dxo-label>
+                                <dx-text-box placeholder="Establecer Fuente" [width]="'100%'" [readOnly]="true">
+                                    <dxi-button name="setFont" location="after" [options]="buttonSetFont">
+                                    </dxi-button>
+                                    <dxi-button *ngIf="showClearButtonFont()" name="removeFont" location="after" [options]="buttonRemoveFont"></dxi-button>
+                                </dx-text-box>
+                            </dxi-item>
+                           
+                            <dxi-item *ngIf="dataType !== 'boolean'">
+                                <dxo-label text="Data Source"> </dxo-label>
+                                <dx-text-box placeholder="Establecer DataSource" [width]="'100%'" [readOnly]="true">
+                                    <dxi-button name="setDataSource" location="after" [options]="buttonSetDataSource">
+                                    </dxi-button>
+                                    <dxi-button *ngIf="showRemoveDataSource" name="removeDataSource" location="after" [options]="buttonRemoveDataSource"></dxi-button>
+                                </dx-text-box>
+                            </dxi-item>
+                        </dxi-item>
+
+                        <dxi-item *ngIf="dataType === 'string' && !property.isFileUpload" caption="Cadenas" itemType="group" [colCount]="1" [colSpan]="1">
+                            <dxi-item>
+                                <dxo-label text="Tipo"> </dxo-label>
+                                <dx-select-box (onValueChanged)="onValueChangedStringType()" [readOnly]="dataType !== 'string'" [dataSource]="listStringTypes" valueExpr="value" displayExpr="text" [width]="'100%'" [(value)]="property.editorType">
+                                </dx-select-box>
+                            </dxi-item>
+                            <dxi-item>
+                                <dxo-label text="Modo"> </dxo-label>
+                                <dx-select-box [showClearButton]="true" (onValueChanged)="onValueChangedStringMode($event)" [readOnly]="dataType !== 'string' || property.editorType !== 'dxTextBox'" [dataSource]="listStringModes" valueExpr="value" displayExpr="text" [width]="'100%'"
+                                    [(value)]="property.editorOptions.mode">
+                                </dx-select-box>
+                            </dxi-item>
+                            <dxi-item>
+                                <dxo-label text="Tamaño Máximo"> </dxo-label>
+                                <dx-number-box (onValueChanged)="onValueChangedMaxLength($event)" [readOnly]="dataType !== 'string'" [(value)]="property.editorOptions.maxLength">
+                                </dx-number-box>
+                            </dxi-item>
+                            <dxi-item>
+                                <dxo-label text="Expresión"> </dxo-label>
+                                <dx-text-box [readOnly]="property.editorType === 'dxTextArea'" [(value)]="property.editorOptions.pattern">
+                                </dx-text-box>
+                            </dxi-item>
+                            <dxi-item>
+                                <dxo-label text="Mensaje Validación"> </dxo-label>
+                                <dx-text-box [readOnly]="property.editorType === 'dxTextArea'" [(value)]="property.editorOptions.patternMessage">
+                                </dx-text-box>
+                            </dxi-item>
+                            <dxi-item>
+                                <dxo-label text="Altura"> </dxo-label>
+                                <dx-number-box [readOnly]="property.editorType !== 'dxTextArea'" [(value)]="property.editorOptions.height">
+                                </dx-number-box>
+                            </dxi-item>
+
+                        </dxi-item>
+
+                        <dxi-item *ngIf="property.editorType === 'dxTextBox' && property.editorOptions.maxLength >= 150 " caption="Adjuntos" itemType="group" [colCount]="1" [colSpan]="1">
+                            <dxi-item>
+                                <dxo-label text="Permitir Subir Archivo"> </dxo-label>
+                                <dx-select-box (onValueChanged)="onValueChangedAllowFileUpload($event)" [(value)]="property.isFileUpload" [dataSource]="listOptions" valueExpr="value" displayExpr="text">
+                                </dx-select-box>
+                            </dxi-item>
+                            <dxi-item *ngIf="property.isFileUpload">
+                                <dxo-label text="Campo"> </dxo-label>
+                                <dx-text-box [value]="property.dataField" [readOnly]="true" [maxLength]="150">
+                                </dx-text-box>
+                            </dxi-item>
+                            <dxi-item *ngIf="property.isFileUpload">
+                                <dxo-label text="Etiqueta"> </dxo-label>
+                                <dx-text-box [(value)]="property.label.text" [maxLength]="150">
+                                </dx-text-box>
+                            </dxi-item>
+                            <dxi-item *ngIf="property.isFileUpload" dataField="libraryId" editorType="dxSelectBox" [editorOptions]="{
+                                        valueExpr: 'RMT_BBLI',
+                                        displayExpr: 'BBL_NOMB',
+                                        dataSource: listLibraries,
+                                        onValueChanged: onValueChangedLibrary
+                                    }">
+                                <dxo-label text="Biblioteca"> </dxo-label>
+                                <dxi-validation-rule type="required" message="Requerido">
+                                </dxi-validation-rule>
+                            </dxi-item>
+                        </dxi-item>
+
+                        <dxi-item *ngIf="property.editorType === 'dxNumberBox'" caption="Númericos" itemType="group" [colCount]="1" [colSpan]="1">
+                            <dxi-item>
+                                <dxo-label text="Modo"> </dxo-label>
+                                <dx-select-box [showClearButton]="true" (onValueChanged)="onValueChangedNumericMode($event)" [readOnly]="!isNumeric" [dataSource]="listNumericModes" valueExpr="value" displayExpr="text" [width]="'100%'" [(value)]="property.editorOptions.mode">
+                                </dx-select-box>
+                            </dxi-item>
+                            <dxi-item>
+                                <dxo-label text="Mínimo"> </dxo-label>
+                                <dx-number-box [format]="numberFormat" [readOnly]="property.editorType !== 'dxNumberBox'" [(value)]="property.editorOptions.minNumber">
+                                </dx-number-box>
+                            </dxi-item>
+                            <dxi-item>
+                                <dxo-label text="Máximo"> </dxo-label>
+                                <dx-number-box [format]="numberFormat" [readOnly]="property.editorType !== 'dxNumberBox'" [(value)]="property.editorOptions.maxNumber">
+                                </dx-number-box>
+                            </dxi-item>
+                            <!-- dataField="Transaccion" editorType="dxSelectBox" [editorOptions]="{dataSource:listOptionsTransaction,valueExpr:'value',displayExpr:'text' }" -->
+                            <dxi-item>
+                                <dxo-label text="Totalizar"></dxo-label>
+                                <dx-select-box
+                                [dataSource]="listOptionsTotalField"
+                                displayExpr="text"
+                                valueExpr="value"
+                                [(value)]="property.isTotalField"
+                                ></dx-select-box>
+                            </dxi-item>                                                                           
+                        </dxi-item>
+
+                        <dxi-item *ngIf="property.editorType === 'dxDateBox'" caption="Fechas" itemType="group" [colCount]="1" [colSpan]="1">
+                            <dxi-item>
+                                <dxo-label text="Formato"> </dxo-label>
+                                <dx-text-box [readOnly]="dataType !== 'date' && dataType !== 'datetime'" [(value)]="property.editorOptions.displayFormat" [maxLength]="150">
+                                </dx-text-box>
+                            </dxi-item>
+                            <dxi-item>
+                                <dxo-label text="Mínimo"> </dxo-label>
+                                <dx-date-box (onValueChanged)="onValueChangedDate($event)" [showClearButton]="true" name="min" #min [readOnly]="dataType !== 'date' && dataType !== 'datetime'" [displayFormat]="property.editorOptions.displayFormat" [width]="'100%'" [(value)]="property.editorOptions.minDate">
+                                    <dxi-button name="dropDown" location="after"></dxi-button>
+                                    <dxi-button name="clear" location="after"></dxi-button>
+                                    <dxi-button name="setMinDate" location="after" [options]=" buttonSetMinDate">
+                                    </dxi-button>
+                                </dx-date-box>
+                            </dxi-item>
+                            <dxi-item>
+                                <dxo-label text="Máximo"> </dxo-label>
+                                <dx-date-box (onValueChanged)="onValueChangedDate($event)" [showClearButton]="true" name="max" #max [readOnly]="dataType !== 'date' && dataType !== 'datetime'" [displayFormat]="property.editorOptions.displayFormat" [width]="'100%'" [(value)]="property.editorOptions.maxDate">
+                                    <dxi-button name="dropDown" location="after"></dxi-button>
+                                    <dxi-button name="clear" location="after"></dxi-button>
+                                    <dxi-button name="setMaxDate" location="after" [options]=" buttonSetMaxDate">
+                                    </dxi-button>
+                                </dx-date-box>
+                            </dxi-item>
+                        </dxi-item>
+
+
+                        <dxi-item *ngIf="dataType === 'boolean'" caption="Booleanos" itemType="group" [colCount]="1" [colSpan]="1">
+                            <dxi-item>
+                                <dxo-label text="Tipo"> </dxo-label>
+                                <dx-select-box [dataSource]="listBooleanTypes" valueExpr="value" displayExpr="text" [width]="'100%'" [(value)]="property.editorType">
+                                    <dxi-button name="dropDown" location="after"></dxi-button>
+                                    <dxi-button name="setDataSourceBoolean" location="after" [options]="buttonSetDataSourceBoolean"></dxi-button>
+                                </dx-select-box>
+                            </dxi-item>
+                        </dxi-item>
+                    </dx-form>
+                </div>
+            </dx-accordion>
+        </ng-template>
+    </ngb-tab>
+    <ngb-tab id="eventsTab" [disabled]="!property.dataField">
+        <ng-template ngbTabTitle>
+            <span ngbTooltip="Eventos"><i class="fas fa-bolt" aria-hidden="true"></i></span>
+        </ng-template>
+        <ng-template ngbTabContent>
+            <br />
+            <dx-form [elementAttr]="{ id: formEventsId }" ophLabelColor ophSubTitleColor (onContentReady)="onContentReady($event)" [showColonAfterLabel]="false" [colCount]="1" labelLocation="top" [minColWidth]="300" [height]="heightForm">
+                <dxi-item>
+                    <dxo-label text="Cambio de Valor"> </dxo-label>
+                    <dx-text-box width="100%" [(value)]="property.configuredOnValueChanged" [readOnly]="true">
+                        <dxi-button name="setValueChanged" location="after" [options]="buttonSetValueChanged">
+                        </dxi-button>
+                        <dxi-button *ngIf="property.configuredOnValueChanged" name="removeValueChanged" location="after" [options]="buttonRemoveValueChanged"></dxi-button>
+                    </dx-text-box>
+                </dxi-item>
+                <dxi-item>
+                    <dxo-label text="Recibe el Foco"> </dxo-label>
+                    <dx-text-box width="100%" [(value)]="property.configuredOnFocusIn" [readOnly]="true">
+                        <dxi-button name="setFocusIn" location="after" [options]="buttonSetFocusIn"></dxi-button>
+                        <dxi-button *ngIf="property.configuredOnFocusIn" name="removeFocusIn" location="after" [options]="buttonRemoveFocusIn"></dxi-button>
+                    </dx-text-box>
+                </dxi-item>
+                <dxi-item>
+                    <dxo-label text="Pierde el Foco"> </dxo-label>
+                    <dx-text-box width="100%" [(value)]="property.configuredOnFocusOut" [readOnly]="true">
+                        <dxi-button name="setFocusOut" location="after" [options]="buttonSetFocusOut"></dxi-button>
+                        <dxi-button *ngIf="property.configuredOnFocusOut" name="removeFocusOut" location="after" [options]="buttonRemoveFocusOut"></dxi-button>
+                    </dx-text-box>
+                </dxi-item>
+                <dxi-item>
+                    <dxo-label text="Presionar Enter"> </dxo-label>
+                    <dx-text-box width="100%" [(value)]="property.configuredOnEnterKey" [readOnly]="true">
+                        <dxi-button name="setEnterKey" location="after" [options]="buttonSetEnterKey"></dxi-button>
+                        <dxi-button *ngIf="property.configuredOnEnterKey" name="removeEnterKey" location="after" [options]="buttonRemoveEnterKey"></dxi-button>
+                    </dx-text-box>
+                </dxi-item>
+            </dx-form>
+        </ng-template>
+    </ngb-tab>
+</ngb-tabset>
+
+<dx-popup [elementAttr]="{ id: popUpDataSourceId }" ophTitleColor ophTitleTextColor ophPrimaryButtonColor ophPrimaryButtonTextColor ophSecundaryButtonColor ophSecundaryButtonTextColor (onContentReady)="onContentReady($event)" title="Data Source" *ngIf="showPopup"
+    [(visible)]="showPopup" [fullScreen]="true" [toolbarItems]="toolbarItemsDataSourceBooleanPopup" [showTitle]="true" [dragEnabled]="false" [closeOnOutsideClick]="false">
+    <div *dxTemplate="let data of 'content'">
+        <dx-data-grid [elementAttr]="{ id: gridDataSourceId }" ophGridHeaderColor ophGridHeaderTextColor (onContentReady)="onContentReady($event)" [dataSource]="dataSource" [allowColumnReordering]="true" [allowColumnResizing]="true" [hoverStateEnabled]="true"
+            [showColumnLines]="true" [showRowLines]="true" [showBorders]="true" [columnAutoWidth]="false" [height]="'auto'">
+            <dxo-paging [pageSize]="10"></dxo-paging>
+            <dxo-pager [showPageSizeSelector]="true" [allowedPageSizes]="[5, 10, 20]" [showInfo]="true">
+            </dxo-pager>
+            <dxo-editing [allowUpdating]="true" [allowAdding]="true" [allowDeleting]="true" [useIcons]="true">
+            </dxo-editing>
+
+            <dxi-column [width]="200" [dataType]="dataType" caption="Id" dataField="value">
+                <dxo-lookup *ngIf="isBit" [dataSource]="listBooleanValue" valueExpr="value" displayExpr="text">
+                </dxo-lookup>
+                <dxi-validation-rule *ngIf="!isBit" type="required" message="Requerido">
+                </dxi-validation-rule>
+            </dxi-column>
+            <dxi-column caption="Nombre" dataField="text">
+                <dxi-validation-rule type="required" message="Requerido">
+                </dxi-validation-rule>
+            </dxi-column>
+        </dx-data-grid>
+    </div>
+</dx-popup>
+
+<dx-popup [elementAttr]="{ id: popUpDataSourceId }" ophTitleColor ophTitleTextColor ophPrimaryButtonColor ophPrimaryButtonTextColor ophSecundaryButtonColor ophSecundaryButtonTextColor (onContentReady)="onContentReady($event)" title="Data Source" *ngIf="showPopupDataSource"
+    [(visible)]="showPopupDataSource" [fullScreen]="true" [showTitle]="true" [dragEnabled]="false" [closeOnOutsideClick]="false" [toolbarItems]="toolbarItemsDataSourcePopup">
+    <div *dxTemplate="let data of 'content'">
+        <ngb-tabset #tabsDatasource id="tabs" [destroyOnHide]="false" (tabChange)="onTabChangeDataSource($event)">
+            <ngb-tab id="dataSourceFixed" title="Data Source Fijo" [disabled]="disabledTabDataSourceFixed">
+                <ng-template ngbTabContent>
+                    <br />
+                    <dx-data-grid [elementAttr]="{ id: gridDataSourceFixedId }" ophGridHeaderColor ophGridHeaderTextColor (onContentReady)="onContentReady($event)" [dataSource]="listDataSourceFixed" [allowColumnReordering]="true" [allowColumnResizing]="true" [hoverStateEnabled]="true"
+                        [showColumnLines]="true" [showRowLines]="true" [showBorders]="true" [columnAutoWidth]="false" [height]="'auto'">
+                        <dxo-paging [pageSize]="10"></dxo-paging>
+                        <dxo-pager [showPageSizeSelector]="true" [allowedPageSizes]="[5, 10, 20]" [showInfo]="true">
+                        </dxo-pager>
+                        <dxo-editing [allowUpdating]="true" [allowAdding]="true" [allowDeleting]="true" [useIcons]="true"></dxo-editing>
+
+                        <dxi-column [width]="200" [dataType]="dataType" caption="Id" dataField="value">
+                            <dxi-validation-rule type="required" message="Requerido">
+                            </dxi-validation-rule>
+                        </dxi-column>
+                        <dxi-column caption="Nombre" dataField="text">
+                            <dxi-validation-rule type="required" message="Requerido">
+                            </dxi-validation-rule>
+                        </dxi-column>
+                    </dx-data-grid>
+                </ng-template>
+            </ngb-tab>
+            <ngb-tab id="dataSourceQuery" title="Data Source Consulta" [disabled]="disabledTabDataSourceQuery">
+                <ng-template ngbTabContent>
+                    <br />
+                    <dx-form [elementAttr]="{ id: formDataSourceQueryId }" ophLabelColor ophSubTitleColor (onContentReady)="onContentReady($event)" [scrollingEnabled]="true" #formQuery [formData]="dataSourceConfig" id="datasource" [showColonAfterLabel]="false" [colCount]="2"
+                        labelLocation="top" validationGroup="queryData" [minColWidth]="300" [height]="gridHeight">
+                        <dxi-item dataField="connectionId" editorType="dxSelectBox" [editorOptions]="{dataSource: listConnections , valueExpr:'Id', displayExpr:'Name' }">
+                            <dxo-label text="Conexión"></dxo-label>
+                            <dxi-validation-rule type="required" message="Requerido">
+                            </dxi-validation-rule>
+                        </dxi-item>
+                        <dxi-item dataField="valueMember">
+                            <dxo-label text="Campo de valor"></dxo-label>
+                            <dxi-validation-rule type="required" message="Requerido">
+                            </dxi-validation-rule>
+                        </dxi-item>
+                        <dxi-item dataField="valueShow">
+                            <dxo-label text="Campo a visualizar"></dxo-label>
+                            <dxi-validation-rule type="required" message="Requerido">
+                            </dxi-validation-rule>
+                        </dxi-item>
+                        <dxi-item itemType = "empty">
+                        </dxi-item>
+                        <dxi-item dataField="query" editorType="dxTextArea" [colCount]="2" [colSpan]="2" [editorOptions]="{ height: textAreaHeight }">
+                            <dxo-label text="Consulta"></dxo-label>
+                            <dxi-validation-rule type="required" message="Requerido">
+                            </dxi-validation-rule>
+                        </dxi-item>
+                        <dxi-item [colCount]="2" [colSpan]="2">
+                            <dx-data-grid [elementAttr]="{ id: gridDataSourceQueryId }" ophGridHeaderColor ophGridHeaderTextColor (onContentReady)="onContentReady($event)" [sorting]="{mode:'none'}" [dataSource]="listParamsService" (onToolbarPreparing)="onToolbarPreparingPamars($event)"
+                                [allowColumnReordering]="false" [allowColumnResizing]="true" [hoverStateEnabled]="true" [showColumnLines]="true" [showRowLines]="true" [showBorders]="true" [columnAutoWidth]="false" [height]="'auto'">
+                                <dxo-filter-row [visible]="true"></dxo-filter-row>
+                                <dxo-header-filter [visible]="true"></dxo-header-filter>
+                                <dxo-editing [useIcons]="true" [allowUpdating]="true" [allowAdding]="true" [allowDeleting]="true">
+                                </dxo-editing>
+                                <dxo-export [enabled]="true"></dxo-export>
+                                <dxi-column dataField="field" caption="Campo">
+                                    <dxi-validation-rule type="required" message="Requerido">
+                                    </dxi-validation-rule>
+                                </dxi-column>
+                                <dxi-column dataField="operator" caption="Operador">
+                                    <dxo-lookup [dataSource]="listOperator" valueExpr="value" displayExpr="text">
+                                    </dxo-lookup>
+                                    <dxi-validation-rule type="required" message="Requerido">
+                                    </dxi-validation-rule>
+                                </dxi-column>
+                                <dxi-column dataField="value" caption="Valor">
+                                    <dxi-validation-rule type="required" message="Requerido">
+                                    </dxi-validation-rule>
+                                </dxi-column>
+                                <dxi-column dataField="operatorUnion" caption="Operador de Unión">
+                                    <dxo-lookup [dataSource]="listOperatorUnion" valueExpr="value" displayExpr="text">
+                                    </dxo-lookup>
+                                    <dxi-validation-rule type="required" message="Requerido">
+                                    </dxi-validation-rule>
+                                </dxi-column>
+                            </dx-data-grid>
+                        </dxi-item>
+
+                    </dx-form>
+                </ng-template>
+            </ngb-tab>
+            <ngb-tab id="dataSourceService" title="Data Source Servicio" [disabled]="disabledTabDataSourceService">
+                <ng-template ngbTabContent>
+                    <br />
+                    <dx-form [elementAttr]="{ id: formDataSourceServiceId }" ophLabelColor ophSubTitleColor (onContentReady)="onContentReady($event)" *ngIf="refreshItemsService" #formService [formData]="dataSourceConfig" id="datasource" [showColonAfterLabel]="false" [colCount]="2"
+                        labelLocation="top" validationGroup="serviceData" [minColWidth]="300" [height]="gridHeight">
+                        <dxi-item [colCount]="2" [colSpan]="2">
+                            <dxi-validation-rule type="required" message="Requerido">
+                            </dxi-validation-rule>
+                            <dxo-label text="URL"> </dxo-label>
+                            <dx-text-box [width]="'100%'" [(value)]="dataSourceConfig.urlService">
+                                <dxi-button name="setParamsService" location="after" [options]="buttonParamsService">
+                                </dxi-button>
+                            </dx-text-box>
+                        </dxi-item>
+                        <dxi-item *ngIf="showParams" [colCount]="2" [colSpan]="2">
+                            <div class="animated fadeIn fast">
+                                <dx-data-grid [elementAttr]="{ id: gridDataSourceServiceId }" ophGridHeaderColor ophGridHeaderTextColor (onContentReady)="onContentReady($event)" [dataSource]="listParamsService" (onToolbarPreparing)="onToolbarPreparingPamars($event)" [allowColumnReordering]="true"
+                                    [allowColumnResizing]="true" [hoverStateEnabled]="true" [showColumnLines]="true" [showRowLines]="true" [showBorders]="true" [columnAutoWidth]="true" [height]="'auto'">
+                                    <dxo-paging [pageSize]="10"></dxo-paging>
+                                    <dxo-pager [showPageSizeSelector]="true" [allowedPageSizes]="[5, 10, 20]" [showInfo]="true">
+                                    </dxo-pager>
+                                    <dxo-editing [allowUpdating]="true" [allowAdding]="true" [allowDeleting]="true" [useIcons]="true"></dxo-editing>
+
+                                    <dxi-column caption="Clave" dataField="value">
+                                        <dxi-validation-rule type="required" message="Requerido">
+                                        </dxi-validation-rule>
+                                    </dxi-column>
+                                    <dxi-column caption="Valor" dataField="text">
+                                        <dxi-validation-rule type="required" message="Requerido">
+                                        </dxi-validation-rule>
+                                    </dxi-column>
+                                </dx-data-grid>
+                            </div>
+                        </dxi-item>
+                        <dxi-item dataField="valueMember">
+                            <dxo-label text="Campo de Valor"></dxo-label>
+                            <dxi-validation-rule type="required" message="Requerido">
+                            </dxi-validation-rule>
+                        </dxi-item>
+                        <dxi-item dataField="dataSourceObject">
+                            <dxo-label text="Nombre Objeto Respuesta"></dxo-label>
+                        </dxi-item>
+                        <dxi-item [colCount]="2" [colSpan]="2">
+                            <dxo-label text="Columnas"> </dxo-label>
+                            <dx-text-box placeholder="Establecer Columnas" readOnly="true" [width]="'100%'">
+                                <dxi-button name="setColumnsService" location="after" [options]="buttonColumnsService">
+                                </dxi-button>
+                            </dx-text-box>
+                        </dxi-item>
+                        <dxi-item *ngIf="showColumns" [colCount]="2" [colSpan]="2">
+                            <div class="animated fadeIn fast">
+                                <dx-data-grid [elementAttr]="{ id: gridDataSourceServiceColumnsId }" ophGridHeaderColor ophGridHeaderTextColor (onContentReady)="onContentReady($event)" [dataSource]="listColumnsService" (onToolbarPreparing)="onToolbarPreparingColumns($event)" [allowColumnReordering]="true"
+                                    [allowColumnResizing]="true" [hoverStateEnabled]="true" [showColumnLines]="true" [showRowLines]="true" [showBorders]="true" [columnAutoWidth]="true" [height]="'auto'">
+                                    <dxo-paging [pageSize]="10"></dxo-paging>
+                                    <dxo-pager [showPageSizeSelector]="true" [allowedPageSizes]="[5, 10, 20]" [showInfo]="true">
+                                    </dxo-pager>
+                                    <dxo-editing [allowUpdating]="true" [allowAdding]="true" [allowDeleting]="true" [useIcons]="true"></dxo-editing>
+
+                                    <dxi-column caption="Campo" dataField="dataField">
+                                        <dxi-validation-rule type="required" message="Requerido">
+                                        </dxi-validation-rule>
+                                    </dxi-column>
+                                    <dxi-column caption="Etiqueta" dataField="caption">
+                                        <dxi-validation-rule type="required" message="Requerido">
+                                        </dxi-validation-rule>
+                                    </dxi-column>
+                                </dx-data-grid>
+                            </div>
+                        </dxi-item>
+                    </dx-form>
+                </ng-template>
+            </ngb-tab>
+        </ngb-tabset>
+    </div>
+</dx-popup>
+
+<dx-popup [elementAttr]="{ id: popUpDefaultValueId }" ophTitleColor ophTitleTextColor ophPrimaryButtonColor ophPrimaryButtonTextColor ophSecundaryButtonColor ophSecundaryButtonTextColor (onContentReady)="onContentReady($event)" #defaultValuesPopup [title]="'Valores Predeterminados'"
+    *ngIf="showPopupFunctions" (onShowing)="onShowingPopupFunctions()" [(visible)]="showPopupFunctions" [fullScreen]="true" [showTitle]="true" [dragEnabled]="false" [closeOnOutsideClick]="false" [toolbarItems]="toolbarItemsDefaultValuePopup">
+    <div *dxTemplate="let data of 'content'">
+        <dx-form [elementAttr]="{ id: formApplicationModeId }" ophLabelColor ophSubTitleColor (onContentReady)="onContentReady($event)" *ngIf="!property.isForeignKey || property.dataField === 'FKEMP_CODI'" [formData]="" [showColonAfterLabel]="false" [colCount]="1" labelLocation="top" [minColWidth]="300">
+            <dxi-item>
+                <dxo-label text="Modo de Aplicación del Valor"> </dxo-label>
+                <dx-tag-box [(value)]="dafaultModesSelected" [dataSource]="listModeApplyDefaultValue" displayExpr="Name" valueExpr="Id">
+                </dx-tag-box>
+                <br />
+            </dxi-item>
+        </dx-form>
+
+        <ngb-tabset id="tabsDefaultValue" [destroyOnHide]="false" (tabChange)="changeTabDefaultValue($event)">
+            <!-- <ngb-tab id="listFunctions" title="Funciones Predeterminadas" *ngIf="!property.isForeignKey || property.dataField === 'FKEMP_CODI'"> -->
+            <ngb-tab id="listFunctions" title="Funciones Predeterminadas">
+                <ng-template ngbTabContent>
+                    <br />
+                    <dx-form [elementAttr]="{ id: formDefaultValueId }" ophLabelColor ophSubTitleColor (onContentReady)="onContentReady($event)" [formData]="defaultValue" [showColonAfterLabel]="false" [colCount]="2" labelLocation="top" [minColWidth]="300">
+                        <dxi-item [colSpan]="2" dataField="function" [editorOptions]="{showClearButton: true }">
+                            <dxo-label text="Función asignada"> </dxo-label>
+                        </dxi-item>
+                        <dxi-item [colSpan]="2" dataField="value" [editorType]="property.editorType" [editorOptions]="defaultValueEditorOptions">
+                            <dxo-label text="Valor"> </dxo-label>
+                        </dxi-item>
+                        <dxi-item [colSpan]="2">
+                            <dx-data-grid [elementAttr]="{ id: gridFunctionsId }" ophGridHeaderColor ophGridHeaderTextColor (onContentReady)="onContentReady($event)" (onRowClick)="onRowClickFunction($event)" [dataSource]="listDefaultFunctions" [allowColumnReordering]="true" [allowColumnResizing]="true"
+                                [hoverStateEnabled]="true" [showColumnLines]="true" [showRowLines]="true" [showBorders]="true" [columnAutoWidth]="false" [height]="'auto'">
+                                <dxo-paging [pageSize]="10"></dxo-paging>
+                                <dxo-pager [showPageSizeSelector]="true" [allowedPageSizes]="[5, 10, 20]" [showInfo]="true">
+                                </dxo-pager>
+                                <dxo-selection mode="single"></dxo-selection>
+                                <dxi-column caption="Nombre" dataField="value"> </dxi-column>
+                                <dxi-column caption="Descripción" dataField="text">
+                                </dxi-column>
+                            </dx-data-grid>
+                        </dxi-item>
+                    </dx-form>
+                </ng-template>
+            </ngb-tab>
+
+            <ngb-tab *ngIf="!property.isForeignKey && property.editorType === 'dxTextBox'" id="listPatterns" title="Secuencias Númericas">
+                <ng-template ngbTabContent>
+                    <br />
+                    <dx-scroll-view [height]="heightPattern">
+                        <dx-list #patterns [dataSource]="listDataPatterns" (onItemClick)="onItemClickPattern($event)" [height]="'auto'" [allowItemReordering]="false" [selectionMode]="'single'">
+                            <div *dxTemplate="let data of 'item'">
+                                <div>{{ data.PAT_PATR }}</div>
+                            </div>
+                        </dx-list>
+                    </dx-scroll-view>
+
+                </ng-template>
+            </ngb-tab>
+            <!-- <ngb-tab *ngIf="property.isForeignKey" id="foreignKeyDefaultValue" title="Llave Foránea">
+                <ng-template ngbTabContent>
+                    <br />
+                    <dx-form [elementAttr]="{ id: formDefaultValueId }" ophLabelColor ophSubTitleColor (onContentReady)="onContentReady($event)" [formData]="defaultValue" [showColonAfterLabel]="false" [colCount]="1" labelLocation="top" [minColWidth]="300">
+                        <dxi-item dataField="value" editorType="dxTextBox">
+                            <dxo-label text="Valor"> </dxo-label>
+                        </dxi-item>
+                    </dx-form>
+                </ng-template>
+            </ngb-tab> -->
+        </ngb-tabset>
+    </div>
+</dx-popup>
+
+<dx-popup [elementAttr]="{ id: popUpSearchId }" ophTitleColor ophTitleTextColor ophPrimaryButtonColor ophPrimaryButtonTextColor ophSecundaryButtonColor ophSecundaryButtonTextColor (onContentReady)="onContentReady($event)" [title]="titleSearch" *ngIf="showPopupConfigSearch"
+    [(visible)]="showPopupConfigSearch" [toolbarItems]="toolbarItemsConfigSearchPopup" [fullScreen]="true" [showTitle]="true" [dragEnabled]="false" [closeOnOutsideClick]="false">
+    <div *dxTemplate="let data of 'content'">
+        <ngb-tabset #tabsDatasource id="tabs" [destroyOnHide]="false">
+            <ngb-tab id="visibleColumns" title="Columnas">
+                <ng-template ngbTabContent>
+                    <br>
+                    <dx-data-grid [elementAttr]="{ id: gridSearchColumnsId }" ophGridHeaderColor ophGridHeaderTextColor (onContentReady)="onContentReady($event)" [dataSource]="listSearchColumns" [allowColumnReordering]="true" [allowColumnResizing]="true" [hoverStateEnabled]="true"
+                        [showColumnLines]="true" [showRowLines]="true" [showBorders]="true" [columnAutoWidth]="false" [height]="'auto'">
+                        <dxo-filter-row [visible]="true"></dxo-filter-row>
+                        <dxo-header-filter [visible]="true"></dxo-header-filter>
+
+                        <dxo-editing mode="row" [allowUpdating]="true" [allowAdding]="true" [allowDeleting]="true" [useIcons]="true"></dxo-editing>
+
+                        <dxi-column [width]="200" caption="Campo" dataField="dataField">
+                            <dxi-validation-rule type="required" message="Requerido">
+                            </dxi-validation-rule>
+                        </dxi-column>
+                        <dxi-column caption="Nombre" dataField="caption">
+                            <dxi-validation-rule type="required" message="Requerido">
+                            </dxi-validation-rule>
+                        </dxi-column>
+                    </dx-data-grid>
+                </ng-template>
+            </ngb-tab>
+
+            <ngb-tab id="showFields" title="Campos para Mostrar">
+                <ng-template ngbTabContent>
+                    <br>
+                    <dx-data-grid [elementAttr]="{ id: gridVisibleColumnsId }" ophGridHeaderColor ophGridHeaderTextColor (onContentReady)="onContentReady($event)" #gridVisibleColumns [dataSource]="listVisibleColumns" [allowColumnReordering]="true" [allowColumnResizing]="true"
+                        [hoverStateEnabled]="true" [showColumnLines]="true" [showRowLines]="true" [showBorders]="true" [columnAutoWidth]="false" [height]="'auto'" [selection]="{ mode: 'multiple' }">
+                        <dxo-paging [pageSize]="10"></dxo-paging>
+                        <dxo-pager [showPageSizeSelector]="true" [allowedPageSizes]="[5, 10]" [showInfo]="true">
+                        </dxo-pager>
+                        <dxo-filter-row [visible]="true"></dxo-filter-row>
+                        <dxo-header-filter [visible]="true"></dxo-header-filter>
+
+                        <dxi-column caption="Campo" cellTemplate="cellTemplate"> </dxi-column>
+                        <div *dxTemplate="let row of 'cellTemplate'">
+                            {{ row.data }}
+                        </div>
+                    </dx-data-grid>
+                </ng-template>
+            </ngb-tab>
+            <ngb-tab id="joins" title="Uniones">
+                <ng-template ngbTabContent>
+                    <br>
+                    <dx-data-grid [elementAttr]="{ id: gridJoinsId }" ophGridHeaderColor ophGridHeaderTextColor (onContentReady)="onContentReady($event)" [sorting]="{mode:'none'}" (onDataErrorOccurred)="onDataErrorOccurred($event)" keyExpr="id" [dataSource]="listDataSourceJoins"
+                        (onInitNewRow)="onInitNewRowJoins($event)" (onCellPrepared)="onCellPreparedJoins($event)" [allowColumnReordering]="false" [allowColumnResizing]="true" [hoverStateEnabled]="true" [showColumnLines]="true" [showRowLines]="true" [showBorders]="true" [columnAutoWidth]="false" [height]="'auto'">
+                        <dxo-filter-row [visible]="true"></dxo-filter-row>
+                        <dxo-header-filter [visible]="true"></dxo-header-filter>
+                        <dxo-editing [allowUpdating]="true" [allowAdding]="true" [allowDeleting]="true" [useIcons]="true"></dxo-editing>
+                        <dxo-export [enabled]="true"></dxo-export>
+                        <dxi-column dataField="id" caption="Id" [allowEditing]="false">
+                            <dxi-validation-rule type="required" message="Requerido">
+                            </dxi-validation-rule>
+                        </dxi-column>                        
+                        <dxi-column dataField="table" caption="Tabla ">
+<!--                             <dxo-lookup [dataSource]="listTables" valueExpr="Name" displayExpr="Name">
+                            </dxo-lookup> -->
+                            <dxi-validation-rule type="required" message="Requerido">
+                            </dxi-validation-rule>
+                        </dxi-column>
+                        <dxi-column dataField="tableAlias" caption="Alias">
+                            <dxi-validation-rule type="required" message="Requerido">
+                            </dxi-validation-rule>
+                        </dxi-column>
+                        <dxi-column dataField="originField" caption="Campo Origen">
+                            <dxi-validation-rule type="required" message="Requerido">
+                            </dxi-validation-rule>
+                        </dxi-column>
+                        <dxi-column dataField="destinationField" caption="Campo Destino">
+                            <dxi-validation-rule type="required" message="Requerido">
+                            </dxi-validation-rule>
+                        </dxi-column>
+                    </dx-data-grid>
+                </ng-template>
+            </ngb-tab>
+            <ngb-tab id="condition" title="Condiciones Consulta General">
+                <ng-template ngbTabContent>
+                    <br>
+                    <p>Condiciones que se usaran en la consulta general cuando se abra el buscador</p>
+                    <dx-data-grid [elementAttr]="{ id: gridConditionsId }" ophGridHeaderColor ophGridHeaderTextColor (onContentReady)="onContentReady($event)" [sorting]="{mode:'none'}" [dataSource]="listDataSourceConditions" [allowColumnReordering]="false" [allowColumnResizing]="true"
+                        [hoverStateEnabled]="true" [showColumnLines]="true" [showRowLines]="true" [showBorders]="true" [columnAutoWidth]="false" [height]="'auto'">
+                        <dxo-filter-row [visible]="true"></dxo-filter-row>
+                        <dxo-header-filter [visible]="true"></dxo-header-filter>
+                        <dxo-editing [allowUpdating]="true" [allowAdding]="true" [allowDeleting]="true" [useIcons]="true"></dxo-editing>
+                        <dxo-export [enabled]="true"></dxo-export>
+                        <dxi-column dataField="field" caption="Campo">
+                            <dxi-validation-rule type="required" message="Requerido">
+                            </dxi-validation-rule>
+                        </dxi-column>
+                        <dxi-column dataField="operator" caption="Operador">
+                            <dxo-lookup [dataSource]="listOperator" valueExpr="value" displayExpr="text">
+                            </dxo-lookup>
+                            <dxi-validation-rule type="required" message="Requerido">
+                            </dxi-validation-rule>
+                        </dxi-column>
+                        <dxi-column dataField="value" caption="Valor">
+                            <dxi-validation-rule type="required" message="Requerido">
+                            </dxi-validation-rule>
+                        </dxi-column>
+                        <dxi-column dataField="operatorUnion" caption="Operador de Unión">
+                            <dxo-lookup [dataSource]="listOperatorUnion" valueExpr="value" displayExpr="text">
+                            </dxo-lookup>
+                            <dxi-validation-rule type="required" message="Requerido">
+                            </dxi-validation-rule>
+                        </dxi-column>
+                    </dx-data-grid>
+                </ng-template>
+            </ngb-tab>
+            <ngb-tab id="conditionOnlyRecord" title="Condiciones Registro Único">
+                <ng-template ngbTabContent>
+                    <br>
+                    <p>Condiciones que se usaran en la consulta de un único registro al presionar la tecla TAB</p>
+                    <dx-data-grid [elementAttr]="{ id: gridconditionOnlyRecordId }" ophGridHeaderColor ophGridHeaderTextColor (onContentReady)="onContentReady($event)" [sorting]="{mode:'none'}" [dataSource]="listDataSourceConditionsOnlyRecord" [allowColumnReordering]="false"
+                        [allowColumnResizing]="true" [hoverStateEnabled]="true" [showColumnLines]="true" [showRowLines]="true" [showBorders]="true" [columnAutoWidth]="false" [height]="'auto'">
+                        <dxo-filter-row [visible]="true"></dxo-filter-row>
+                        <dxo-header-filter [visible]="true"></dxo-header-filter>
+                        <dxo-editing [allowUpdating]="true" [allowAdding]="true" [allowDeleting]="true" [useIcons]="true"></dxo-editing>
+                        <dxo-export [enabled]="true"></dxo-export>
+                        <dxi-column dataField="field" caption="Campo">
+                            <dxi-validation-rule type="required" message="Requerido">
+                            </dxi-validation-rule>
+                        </dxi-column>
+                        <dxi-column dataField="operator" caption="Operador">
+                            <dxo-lookup [dataSource]="listOperator" valueExpr="value" displayExpr="text">
+                            </dxo-lookup>
+                            <dxi-validation-rule type="required" message="Requerido">
+                            </dxi-validation-rule>
+                        </dxi-column>
+                        <dxi-column dataField="value" caption="Valor">
+                            <dxi-validation-rule type="required" message="Requerido">
+                            </dxi-validation-rule>
+                        </dxi-column>
+                        <dxi-column dataField="operatorUnion" caption="Operador de Unión">
+                            <dxo-lookup [dataSource]="listOperatorUnion" valueExpr="value" displayExpr="text">
+                            </dxo-lookup>
+                            <dxi-validation-rule type="required" message="Requerido">
+                            </dxi-validation-rule>
+                        </dxi-column>
+                    </dx-data-grid>
+                </ng-template>
+            </ngb-tab>
+            <ngb-tab id="orderBy" title="Ordenamiento">
+                <ng-template ngbTabContent>
+                    <br>
+                    <dx-data-grid [elementAttr]="{ id: gridOrderId }" ophGridHeaderColor ophGridHeaderTextColor (onContentReady)="onContentReady($event)" [sorting]="{mode:'none'}" [dataSource]="listDataSourceOrder" [allowColumnReordering]="false" [allowColumnResizing]="true"
+                        [hoverStateEnabled]="true" [showColumnLines]="true" [showRowLines]="true" [showBorders]="true" [columnAutoWidth]="false" [height]="'auto'">
+                        <dxo-filter-row [visible]="true"></dxo-filter-row>
+                        <dxo-header-filter [visible]="true"></dxo-header-filter>
+                        <dxo-editing [allowAdding]="true" [allowDeleting]="true" [useIcons]="true"></dxo-editing>
+                        <dxo-export [enabled]="true"></dxo-export>
+                        <dxi-column dataField="field" caption="Campo">
+                            <dxi-validation-rule type="required" message="Requerido">
+                            </dxi-validation-rule>
+                        </dxi-column>
+                    </dx-data-grid>
+                </ng-template>
+            </ngb-tab>
+            <ngb-tab id="propertiesConfig" title="Propiedades adicionales">
+                <ng-template ngbTabContent>
+                    <br>
+                    <dx-data-grid [elementAttr]="{ id: gridPropsId }" ophGridHeaderColor ophGridHeaderTextColor (onContentReady)="onContentReady($event)" [sorting]="{mode:'none'}" keyExpr="id" [dataSource]="listDataSourceProps" [allowColumnReordering]="false" [allowColumnResizing]="true"
+                        [hoverStateEnabled]="true" [showColumnLines]="true" [showRowLines]="true" [showBorders]="true" [columnAutoWidth]="false" [height]="'auto'">
+                        <dxo-filter-row [visible]="false"></dxo-filter-row>
+                        <dxo-header-filter [visible]="false"></dxo-header-filter>
+                        <dxo-editing [allowUpdating]="true" [useIcons]="true"></dxo-editing>
+                        <dxo-export [enabled]="true"></dxo-export>
+                        <dxi-column dataField="id" caption="Id" [allowEditing]="false">
+                        </dxi-column>
+                        <dxi-column dataField="field" caption="Propiedad" [allowEditing]="false">
+                        </dxi-column>
+                        <dxi-column dataField="value" caption="Valor">
+                            <dxi-validation-rule type="required" message="Requerido">
+                            </dxi-validation-rule>
+                            <dxo-lookup [dataSource]="listValuesProps" valueExpr="value" displayExpr="text">
+                            </dxo-lookup>
+                        </dxi-column>
+                    </dx-data-grid>
+                </ng-template>
+            </ngb-tab>            
+            <ngb-tab id="subQueryConfig" title="Subconsulta">
+                <ng-template ngbTabContent>
+                    <br>
+                    <p>Sentencia que se agrega como filtro de la consulta principal</p>
+                    <dx-form [elementAttr]="{ id: formsubQueryId }" ophLabelColor ophSubTitleColor
+                        (onContentReady)="onContentReady($event)" #formsubQuery [formData]="subQueryFormdata"
+                        [showColonAfterLabel]="false" [colCount]="1" labelLocation="top"
+                        validationGroup="subQueryData">
+                        <dxi-item>
+                            <!-- <dxo-label text="Sentencia">
+                            </dxo-label> -->
+                            <dx-text-area [height]="450" [(value)]="subQueryFormdata.query">
+                            </dx-text-area>
+                        </dxi-item>                        
+                    </dx-form>
+                </ng-template>
+            </ngb-tab>
+        </ngb-tabset>
+    </div>
+</dx-popup>
+
+<app-controls-events *ngIf="showPopupEvents" [event]="event" [eventName]="eventName" [showPopup]="showPopupEvents" (closePopup)="showPopupEvents = $event" [listAllowHideFields]="listItemsForm" [field]="property.dataField" [listEventField]="listEventData"
+    (getEventConfig)="getEventConfig($event)" [tableName]="tableName" [connectionId]="connectionId"></app-controls-events>
+
+<dx-load-panel #loadPanelProperties shadingColor="rgba(0,0,0,0.4)" [position]="{ of: '#properties' }" [(visible)]="showLoadPanel" [showIndicator]="true" [showPane]="true" [shading]="true" [closeOnOutsideClick]="false">
+</dx-load-panel>
+
+<dx-popup [elementAttr]="{ id: popUpUpdateDataId }" ophTitleColor ophTitleTextColor ophPrimaryButtonColor ophPrimaryButtonTextColor ophSecundaryButtonColor ophSecundaryButtonTextColor (onContentReady)="onContentReady($event)" class="popup" [minHeight]="300"
+    [maxWidth]="500" [minWidth]="500" width="auto" height="auto" [showTitle]="true" title="Información" [dragEnabled]="false" [closeOnOutsideClick]="true" [(visible)]="showPopupUpdateInfo">
+    <div *dxTemplate="let data of 'content'">
+        <dx-text-area [readOnly]="true" [height]="300" [(value)]="notificationUpdateInfo">
+        </dx-text-area>
+    </div>
+</dx-popup>
+
+<!-- popup para establecer fuente -->
+
+<dx-popup [elementAttr]="{ id: popUpFontId }" ophTitleColor ophTitleTextColor ophPrimaryButtonColor ophPrimaryButtonTextColor ophSecundaryButtonColor ophSecundaryButtonTextColor (onContentReady)="onContentReady($event)" title="Establecer Fuente" *ngIf="showPopupSetFontStyle"
+    [(visible)]="showPopupSetFontStyle" width="auto" [height]="popupFontHeight" [showTitle]="true" [dragEnabled]="false" [closeOnOutsideClick]="false" [toolbarItems]="toolbarItemsFontPopup" (onShown)="setValuesInPreview()" [showCloseButton]="false">
+    <div *dxTemplate="let data of 'content'">
+        <div class="row">
+            <div class="col-3">
+                <p class="font-weight-bold">Fuente</p>
+                <dx-list #dxListFontFamily [height]="300" [width]="200" selectionMode="single" [dataSource]="listFontFamily" (onItemClick)="onItemClickFont(1, $event)">
+                    <div *dxTemplate="let data of 'item'">
+                        <div>{{ data?.name }}</div>
+                    </div>
+                </dx-list>
+            </div>
+            <div class="col-3">
+                <p class="font-weight-bold">Estilo de Fuente</p>
+                <dx-list #dxListFontStyle [height]="300" [width]="200" selectionMode="single" [dataSource]="listFontStyle" (onItemClick)="onItemClickFont(2, $event)">
+                    <div *dxTemplate="let data of 'item'">
+                        <div>{{ data?.name }}</div>
+                    </div>
+                </dx-list>
+            </div>
+            <div class="col-3">
+                <p class="font-weight-bold">Tamaño</p>
+                <dx-list #dxListFontSize [height]="300" [width]="200" selectionMode="single" [dataSource]="listFontSize" (onItemClick)="onItemClickFont(3, $event)">
+                    <div *dxTemplate="let data of 'item'">
+                        <div>{{ data?.name }}</div>
+                    </div>
+                </dx-list>
+            </div>
+            <div class="col-3">
+                <p class="font-weight-bold">Efectos</p>
+                <dx-list #dxListFontEffect [height]="300" [width]="200" selectionMode="single" [dataSource]="listFontEffect" (onItemClick)="onItemClickFont(4, $event)">
+                    <div *dxTemplate="let data of 'item'">
+                        <div>{{ data?.name }}</div>
+                    </div>
+                </dx-list>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-12 mt-3">
+                <h6 class="text-center">Vista Previa</h6>
+                <div id="fontPreview" class="text-center">
+                    Ohelia Suite
+                </div>
+            </div>
+        </div>
+    </div>
+</dx-popup>

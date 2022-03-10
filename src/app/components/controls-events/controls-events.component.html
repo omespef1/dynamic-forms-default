@@ -1,0 +1,464 @@
+<dx-popup [elementAttr]="{ id: popUpId }" ophTitleColor ophTitleTextColor ophPrimaryButtonColor
+    ophPrimaryButtonTextColor ophSecundaryButtonColor ophSecundaryButtonTextColor
+    (onContentReady)="onContentReady($event)" (onHiding)="onHidingPopup()" [title]="popupTitle" *ngIf="showPopup"
+    [(visible)]="showPopup" [height]="popupHeight" [showTitle]="true" [dragEnabled]="false"
+    [closeOnOutsideClick]="false" [toolbarItems]="toolbarItemsPopup" [fullScreen]="true">
+
+    <div *dxTemplate="let data of 'content'">
+        <ngb-tabset #tabs [destroyOnHide]="false">
+            <ngb-tab id="hideField" title="Ocultar/Mostrar Campos" [disabled]="event === 'onFocusIn'">
+                <ng-template ngbTabContent>
+                    <br>
+                    <dx-toolbar [items]="itemsToolbarHideField">
+                    </dx-toolbar>
+                    <br>
+                    <dx-form [elementAttr]="{ id: formHideFieldId }" ophLabelColor ophSubTitleColor
+                        (onContentReady)="onContentReady($event)" #hideFieldForm [formData]="hideField"
+                        [showColonAfterLabel]="false" [colCount]="3" labelLocation="left"
+                        validationGroup="hideFieldData" [minColWidth]="300">
+                        <dxi-item>
+                            <dxo-label text="Secuencia">
+                            </dxo-label>
+                            <dx-number-box [(value)]="actionOrder" [min]="1">
+                                <dx-validator validationGroup="hideFieldData">
+                                    <dxi-validation-rule type="required" message="Requerido"></dxi-validation-rule>
+                                </dx-validator>
+                            </dx-number-box>
+                            <dxi-validation-rule type="required" message="Requerido"></dxi-validation-rule>
+                        </dxi-item>
+                        <dxi-item>
+                            <dxo-label text="Descripción">
+                            </dxo-label>
+                            <dx-text-box [(value)]="hideField.description">
+                                <dx-validator validationGroup="hideFieldData">
+                                    <dxi-validation-rule type="required" message="Requerido"></dxi-validation-rule>
+                                </dx-validator>
+                            </dx-text-box>
+                            <dxi-validation-rule type="required" message="Requerido"></dxi-validation-rule>
+                        </dxi-item>
+                        <dxi-item>
+                            <dxo-label text="Campo">
+                            </dxo-label>
+                            <dx-text-box [(value)]="dataFieldDisplay" [readOnly]="true"> </dx-text-box>
+                        </dxi-item>
+                        <dxi-item>
+                            <dxo-label text="Campos a Ocultar">
+                            </dxo-label>
+                            <dx-tag-box [(value)]="hideField.hideFields" [dataSource]="listFields"
+                                displayExpr="label.text" valueExpr="dataField">
+                                <dx-validator validationGroup="hideFieldData">
+                                    <dxi-validation-rule type="required" message="Requerido"></dxi-validation-rule>
+                                </dx-validator>
+                            </dx-tag-box>
+                            <dxi-validation-rule type="required" message="Requerido"></dxi-validation-rule>
+                        </dxi-item>
+                        <dxi-item>
+                            <dxo-label text="Comparador">
+                            </dxo-label>
+                            <dx-select-box [dataSource]="listOperator" valueExpr="value" displayExpr="text"
+                                [width]="'100%'" [(value)]="hideField.operator">
+                                <dx-validator validationGroup="hideFieldData">
+                                    <dxi-validation-rule type="required" message="Requerido"></dxi-validation-rule>
+                                </dx-validator>
+                            </dx-select-box>
+                            <dxi-validation-rule type="required" message="Requerido"></dxi-validation-rule>
+                        </dxi-item>
+                        <dxi-item>
+                            <dxo-label text="Valores">
+                            </dxo-label>
+                            <dx-text-box [(value)]="hideField.value">
+                                <dx-validator validationGroup="hideFieldData">
+                                    <dxi-validation-rule type="required" message="Requerido"></dxi-validation-rule>
+                                </dx-validator>
+                            </dx-text-box>
+                            <dxi-validation-rule type="required" message="Requerido"></dxi-validation-rule>
+                        </dxi-item>
+                        <dxi-item>
+                            <dxo-label text="Visible">
+                            </dxo-label>
+                            <dx-select-box [dataSource]="listActions" valueExpr="value" displayExpr="text"
+                                [width]="'100%'" [(value)]="hideField.visible">
+                            </dx-select-box>
+
+                        </dxi-item>
+                    </dx-form>
+                </ng-template>
+            </ngb-tab>
+            <ngb-tab id="rules" title="Reglas">
+                <ng-template ngbTabContent>
+                    <br>
+                    <dx-toolbar [items]="itemsToolbarRule">
+                    </dx-toolbar>
+                    <br>
+                    <dx-form [elementAttr]="{ id: formRuledId }" ophLabelColor ophSubTitleColor
+                        (onContentReady)="onContentReady($event)" #ruleActionForm [formData]="ruleAction"
+                        [showColonAfterLabel]="false" validationGroup="ruleActionData" [colCount]="3"
+                        [minColWidth]="300" [labelLocation]="'left'">
+                        <dxi-item>
+                            <dxo-label text="Secuencia">
+                            </dxo-label>
+                            <dx-number-box [(value)]="actionOrder" [min]="1">
+                                <dx-validator validationGroup="ruleActionData">
+                                    <dxi-validation-rule type="required" message="Requerido"></dxi-validation-rule>
+                                </dx-validator>
+                            </dx-number-box>
+                            <dxi-validation-rule type="required" message="Requerido"></dxi-validation-rule>
+                        </dxi-item>
+                        <dxi-item>
+                            <dxo-label text="Descripción">
+                            </dxo-label>
+                            <dx-text-box [(value)]="ruleAction.description">
+                                <dx-validator validationGroup="ruleActionData">
+                                    <dxi-validation-rule type="required" message="Requerido"></dxi-validation-rule>
+                                </dx-validator>
+                            </dx-text-box>
+                            <dxi-validation-rule type="required" message="Requerido"></dxi-validation-rule>
+                        </dxi-item>
+                        <dxi-item>
+                            <dxo-label text="Campo">
+                            </dxo-label>
+                            <dx-text-box [(value)]="dataField" [readOnly]="true"> </dx-text-box>
+                        </dxi-item>
+                        <dxi-item>
+                            <dxo-label text="Regla">
+                            </dxo-label>
+                            <dx-drop-down-box [readOnly]="editMode" name="rule" (onOpened)="onOpened($event)"
+                                [(value)]="ruleAction.ruleCode" [dropDownOptions]="{width:'600',height:'auto'}"
+                                valueExpr="code" [deferRendering]="false" displayExpr="description"
+                                [dataSource]="listRules">
+
+                                <div *dxTemplate="let data of 'content'">
+                                    <dx-data-grid [elementAttr]="{ id: gridRuleId }" ophGridHeaderColor
+                                        ophGridHeaderTextColor (onContentReady)="onContentReady($event)"
+                                        [columnAutoWidth]="true" [dataSource]="listRules"
+                                        [selection]="{ mode: 'single' }" [hoverStateEnabled]="true"
+                                        [paging]="{ enabled: true, pageSize: 10 }" [filterRow]="{ visible: true }"
+                                        (onRowClick)="onRowClick($event)" [hoverStateEnabled]="true"
+                                        [showColumnLines]="true" [showRowLines]="true" [showBorders]="true">
+
+                                        <dxi-column dataField="code" caption="Código"></dxi-column>
+                                        <dxi-column dataField="description" caption="Nombre"></dxi-column>
+
+                                    </dx-data-grid>
+                                </div>
+                                <dx-validator validationGroup="ruleActionData">
+                                    <dxi-validation-rule type="required" message="Requerido"></dxi-validation-rule>
+                                </dx-validator>
+                            </dx-drop-down-box>
+                            <dxi-validation-rule type="required" message="Requerido"></dxi-validation-rule>
+                        </dxi-item>
+                        <dxi-item dataField="setValueField" editorType="dxSelectBox"
+                            [editorOptions]="{width:'100%',dataSource:listFieldsSetValueRule,valueExpr:'value', displayExpr:'text'}">
+                            <dxo-label text="Campo de Respuesta">
+                            </dxo-label>
+                            <dxi-validation-rule type="required" message="Requerido"></dxi-validation-rule>
+                        </dxi-item>
+
+                    </dx-form>
+                    <br>
+                    <dx-data-grid [elementAttr]="{ id: gridRulesId }" ophGridHeaderColor ophGridHeaderTextColor
+                        (onContentReady)="onContentReady($event)" [dataSource]="listParamsRule" [height]="180"
+                        [allowColumnReordering]="true" [allowColumnResizing]="true" [hoverStateEnabled]="true"
+                        [showColumnLines]="true" [showRowLines]="true" [showBorders]="true" [columnAutoWidth]="false">
+                        <dxo-filter-row [visible]="true"></dxo-filter-row>
+                        <dxo-header-filter [visible]="true"></dxo-header-filter>
+                        <dxo-paging [pageSize]="10"></dxo-paging>
+                        <dxo-pager [showPageSizeSelector]="true" [allowedPageSizes]="[5, 10, 20]" [showInfo]="true">
+                        </dxo-pager>
+
+                        <dxi-column caption="Código" dataField="code">
+
+                        </dxi-column>
+
+
+                        <dxi-column caption="Descripción" dataField="description">
+
+                        </dxi-column>
+
+                        <dxi-column caption="Tipo de Dato" dataField="dataType">
+                            <dxo-lookup [dataSource]="listDataTypes" valueExpr="value" displayExpr="text">
+                            </dxo-lookup>
+                        </dxi-column>
+
+                        <dxi-column caption="Establecer Valor" cellTemplate="cellTemplate" [allowFixing]="true">
+                        </dxi-column>
+                        <div *dxTemplate="let row of 'cellTemplate'" class="text-center">
+                            <span>
+                                <i class="dx-icon-edit pointer" (click)="setValueRule(row)" aria-hidden="true"></i>
+
+                            </span>
+                        </div>
+                    </dx-data-grid>
+
+                </ng-template>
+            </ngb-tab>
+            <ngb-tab id="otherField" title="Asignar valor otros campos" *ngIf="event === 'onValueChanged'">
+                <ng-template ngbTabContent>
+                    <br>
+                    <dx-toolbar [items]="itemsToolbarOthersFields">
+                    </dx-toolbar>
+                    <br>
+                    <dx-form [elementAttr]="{ id: formOthersFieldsId }" ophLabelColor ophSubTitleColor
+                        (onContentReady)="onContentReady($event)" #otherFieldForm [formData]="otherField"
+                        [showColonAfterLabel]="false" validationGroup="otherFieldData" [colCount]="3"
+                        [minColWidth]="100" [labelLocation]="'left'">
+                        <dxi-item>
+                            <dxo-label text="Secuencia">
+                            </dxo-label>
+                            <dx-number-box [(value)]="actionOrder" [min]="1">
+                                <dx-validator validationGroup="otherFieldData">
+                                    <dxi-validation-rule type="required" message="Requerido"></dxi-validation-rule>
+                                </dx-validator>
+                            </dx-number-box>
+                            <dxi-validation-rule type="required" message="Requerido"></dxi-validation-rule>
+                        </dxi-item>
+                        <dxi-item>
+                            <dxo-label text="Descripción">
+                            </dxo-label>
+                            <dx-text-box [(value)]="otherField.description">
+                                <dx-validator validationGroup="otherFieldData">
+                                    <dxi-validation-rule type="required" message="Requerido"></dxi-validation-rule>
+                                </dx-validator>
+                            </dx-text-box>
+                            <dxi-validation-rule type="required" message="Requerido"></dxi-validation-rule>
+                        </dxi-item>
+                        <dxi-item>
+                            <dxo-label text="Campo">
+                            </dxo-label>
+                            <dx-text-box [(value)]="dataFieldDisplay" [readOnly]="true"> </dx-text-box>
+                        </dxi-item>
+                        <dxi-item>
+                            <dxo-label text="Campo a Asignar">
+                            </dxo-label>
+                            <dx-select-box [dataSource]="listFieldsSetValueOther" valueExpr="value" displayExpr="text"
+                                [width]="'100%'" [(value)]="otherField.field">
+                                <dx-validator validationGroup="otherFieldData">
+                                    <dxi-validation-rule type="required" message="Requerido"></dxi-validation-rule>
+                                </dx-validator>
+                            </dx-select-box>
+                            <dxi-validation-rule type="required" message="Requerido"></dxi-validation-rule>
+                        </dxi-item>
+                        <dxi-item dataField="otherField.type" editorType="dxSelectBox" template="isFuncMethod"
+                            [editorOptions]="{dataSource:listSourceTypeSetValueOtherField,valueExpr:'value',displayExpr:'text' }">
+                            <dxo-label text="Tipo">
+                            </dxo-label>
+                            <dxi-validation-rule type="required" message="Requerido"></dxi-validation-rule>
+                        </dxi-item>
+                        <dxi-item>
+                            <dxo-label text="Valor/Función/Método">
+                            </dxo-label>
+                            <dx-text-box [(value)]="otherField.valuefunc" hint="Funcion debe terminar en ()">
+                                <dx-validator validationGroup="otherFieldData">
+                                    <dxi-validation-rule type="required" message="Requerido"></dxi-validation-rule>
+                                </dx-validator>
+                            </dx-text-box>
+                            <dxi-validation-rule type="required" message="Requerido"></dxi-validation-rule>
+                        </dxi-item>
+                        <div *dxTemplate="let item of 'isFuncMethod'">
+                            <dx-select-box [dataSource]="listSourceTypeSetValueOtherField" valueExpr="value"
+                                displayExpr="text" [width]="'100%'" [(value)]="otherField.type"
+                                (onValueChanged)="onValueChangedisFuncMeth($event)">
+                                <dxi-button name="dropDown" location="after"></dxi-button>
+                                <dxi-button *ngIf="otherField.type === 2" name="isFunction" location="after"
+                                    [options]="isFunctionButton"></dxi-button>
+                                <dxi-button *ngIf="otherField.type === 3" name="isMethod" location="after"
+                                    [options]="isMethodButton"></dxi-button>
+                            </dx-select-box>
+                        </div>
+                    </dx-form>
+                </ng-template>
+            </ngb-tab>
+        </ngb-tabset>
+        <br>
+        <dx-data-grid [elementAttr]="{ id: gridActionsId }" ophGridHeaderColor ophGridHeaderTextColor
+            (onContentReady)="onContentReady($event)" [dataSource]="dataSourceActions"
+            (onRowDblClick)="editAction($event)" [allowColumnReordering]="true" [allowColumnResizing]="true"
+            [hoverStateEnabled]="true" [showColumnLines]="true" [showRowLines]="true" [showBorders]="true"
+            [columnAutoWidth]="false" [height]='gridHeight'>
+            <dxo-filter-row [visible]="true"></dxo-filter-row>
+            <dxo-header-filter [visible]="true"></dxo-header-filter>
+            <dxo-paging [pageSize]="10"></dxo-paging>
+            <dxo-pager [showPageSizeSelector]="true" [allowedPageSizes]="[5, 10, 20]" [showInfo]="true">
+            </dxo-pager>
+
+            <dxi-column [width]="150" alignment="center" caption="Secuencia" dataField="sequence" dataType="number">
+            </dxi-column>
+            <dxi-column caption="Tipo" dataField="type">
+                <dxo-lookup [dataSource]="listActionType" valueExpr="value" displayExpr="text">
+                </dxo-lookup>
+            </dxi-column>
+            <dxi-column caption="Descripción" dataField="config.description"> </dxi-column>
+            <dxi-column [width]="100" caption="Acciones" cellTemplate="cellTemplate" [allowFixing]="true"></dxi-column>
+            <div *dxTemplate="let row of 'cellTemplate'" class="text-center">
+                <span>
+                    <i class="dx-icon-edit pointer" (click)="editAction(row)" aria-hidden="true"></i>
+                    <i class="dx-icon-trash pointer" (click)="deleteAction(row)" aria-hidden="true"></i>
+                </span>
+            </div>
+
+        </dx-data-grid>
+    </div>
+</dx-popup>
+
+<dx-popup [elementAttr]="{ id: popUpRuleValuId }" ophTitleColor ophTitleTextColor ophPrimaryButtonColor
+    ophPrimaryButtonTextColor ophSecundaryButtonColor ophSecundaryButtonTextColor
+    (onContentReady)="onContentReady($event)" title="Establecer Valor" *ngIf="showPopupSetValue"
+    [(visible)]="showPopupSetValue" [height]="240" [width]="600" [showTitle]="true" [dragEnabled]="false"
+    [closeOnOutsideClick]="false" [toolbarItems]="toolbarItemsPopupSetValueParamRule">
+    <div *dxTemplate="let data of 'content'">
+        <dx-form [elementAttr]="{ id: formRuleValueId }" ophLabelColor ophSubTitleColor
+            (onContentReady)="onContentReady($event)" #ruleParamForm [formData]="ruleParam"
+            [showColonAfterLabel]="false" [colCount]="2" [minColWidth]="300" [labelLocation]="'top'">
+
+            <dxi-item dataField="sourceType" editorType="dxSelectBox"
+                [editorOptions]="{width:'100%', dataSource:listSourceTypeSetValueRule,valueExpr:'value', displayExpr:'text', onValueChanged:onValueChangedSourceType}">
+                <dxo-label text="Obtener Desde">
+                </dxo-label>
+            </dxi-item>
+
+            <dxi-item dataField="value" *ngIf="ruleDataType === 'number' && ruleParam.sourceType === 1"
+                editorType="dxNumberBox">
+                <dxo-label text="Valor Fijo">
+                </dxo-label>
+                <dxi-validation-rule *ngIf="!ruleParam.isNullable" type="required" message="Requerido">
+                </dxi-validation-rule>
+            </dxi-item>
+
+            <dxi-item dataField="value" *ngIf="ruleDataType === 'string' && ruleParam.sourceType === 1"
+                editorType="dxTextBox">
+                <dxo-label text="Valor Fijo">
+                </dxo-label>
+                <dxi-validation-rule *ngIf="!ruleParam.isNullable" type="required" message="Requerido">
+                </dxi-validation-rule>
+            </dxi-item>
+
+            <dxi-item dataField="value" *ngIf="ruleDataType === 'date' && ruleParam.sourceType === 1"
+                editorType="dxDateBox" [editorOptions]="{width:'100%'}">
+                <dxo-label text="Valor Fijo">
+                </dxo-label>
+                <dxi-validation-rule *ngIf="!ruleParam.isNullable" type="required" message="Requerido">
+                </dxi-validation-rule>
+            </dxi-item>
+
+            <dxi-item dataField="value" *ngIf="ruleDataType === 'boolean' && ruleParam.sourceType === 1"
+                editorType="dxSelectBox" [editorOptions]="{width:'100%'}">
+                <dxo-label text="Valor Fijo">
+                </dxo-label>
+                <dxi-validation-rule *ngIf="!ruleParam.isNullable" type="required" message="Requerido">
+                </dxi-validation-rule>
+            </dxi-item>
+
+            <dxi-item dataField="value" *ngIf="ruleParam.sourceType === 2" editorType="dxSelectBox"
+                [editorOptions]="{width:'100%',dataSource:listFieldsRuleValue,valueExpr:'value', displayExpr:'text'}">
+                <dxo-label text="Valor Fijo">
+                </dxo-label>
+                <dxi-validation-rule *ngIf="!ruleParam.isNullable" type="required" message="Requerido">
+                </dxi-validation-rule>
+            </dxi-item>
+
+        </dx-form>
+    </div>
+</dx-popup>
+
+<dx-popup [elementAttr]="{ id: popUpFunctionsId }" ophTitleColor ophTitleTextColor ophPrimaryButtonColor
+    ophPrimaryButtonTextColor ophSecundaryButtonColor ophSecundaryButtonTextColor
+    (onContentReady)="onContentReady($event)" title="Funciones" *ngIf="showPopupFunctions"
+    [(visible)]="showPopupFunctions" width="50%" [height]="popupHeightFunc" [showTitle]="true" [dragEnabled]="false"
+    [closeOnOutsideClick]="false" [toolbarItems]="toolbarItemsFunctionsPopup" [showCloseButton]="true">
+    <div *dxTemplate="let data of 'content'">
+        <!-- <dx-toolbar [items]="itemsFunctionToolbar">
+        </dx-toolbar> -->
+        <!-- Grilla listado -->
+        <dx-data-grid [elementAttr]="{ id: gridFunctionsId }" ophGridHeaderColor ophGridHeaderTextColor
+            (onContentReady)="onContentReady($event)" keyExpr="Id" [dataSource]="listFunctions"
+            (onRowDblClick)="onRowFunctionDblClick($event)" [allowColumnReordering]="true" [allowColumnResizing]="true"
+            [hoverStateEnabled]="true" [showColumnLines]="true" [showRowLines]="true" [showBorders]="true"
+            [columnAutoWidth]="false" [height]="'auto'">
+            <dxo-filter-row [visible]="true"></dxo-filter-row>
+            <dxo-header-filter [visible]="true"></dxo-header-filter>
+            <dxo-selection mode="single"></dxo-selection>
+            <dxo-paging [pageSize]="10"></dxo-paging>
+            <dxo-pager [showPageSizeSelector]="true" [allowedPageSizes]="[5, 10, 20]" [showInfo]="true">
+            </dxo-pager>
+            <dxi-column caption="Codigo" dataField="FunctionCode"></dxi-column>
+            <dxi-column caption="Descripción" dataField="FunctionDesc"></dxi-column>
+        </dx-data-grid>
+        <dx-popup [elementAttr]="{ id: popUpFunctionsIntId }" ophTitleColor ophTitleTextColor ophPrimaryButtonColor
+            ophPrimaryButtonTextColor ophSecundaryButtonColor ophSecundaryButtonTextColor
+            (onContentReady)="onContentReady($event)" title="Homologación variables" *ngIf="showPopupFunctionsInt"
+            [(visible)]="showPopupFunctionsInt" width="50%" [height]="popupHeightFuncInt" [showTitle]="true"
+            [dragEnabled]="true" [closeOnOutsideClick]="false" [toolbarItems]="toolbarItemsFunctionsIntPopup"
+            [showCloseButton]="true">
+            <dx-data-grid [elementAttr]="{ id: gridVarsFunctionsId }" ophGridHeaderColor ophGridHeaderTextColor
+                (onContentReady)="onContentReady($event)" keyExpr="variable" [dataSource]="listVarsFunctions"
+                [allowColumnReordering]="false" [allowColumnResizing]="false" [hoverStateEnabled]="true"
+                [showColumnLines]="true" [showRowLines]="true" [showBorders]="true" [columnAutoWidth]="false"
+                [height]="'auto'">
+                <dxo-editing [mode]="'cell'" [allowUpdating]="true"></dxo-editing>
+                <dxi-column caption="Variable" dataField="variable" [allowEditing]="false"></dxi-column>
+                <dxi-column caption="Campo" dataField="field">
+                    <dxo-lookup [dataSource]="listFieldsSetFunction" valueExpr="value" displayExpr="text">
+                    </dxo-lookup>
+                </dxi-column>
+            </dx-data-grid>
+        </dx-popup>
+    </div>
+</dx-popup>
+
+<dx-popup [elementAttr]="{ id: popUpMethodId }" ophTitleColor ophTitleTextColor ophPrimaryButtonColor
+    ophPrimaryButtonTextColor ophSecundaryButtonColor ophSecundaryButtonTextColor
+    (onContentReady)="onContentReady($event)" title="Métodos" *ngIf="showPopupMethod" [(visible)]="showPopupMethod"
+    width="80%" [height]="popupHeightFunc" [showTitle]="true" [dragEnabled]="false" [closeOnOutsideClick]="false"
+    [toolbarItems]="toolbarItemsMethodPopup" [showCloseButton]="true">
+    <div *dxTemplate="let data of 'content'">
+        <dx-data-grid [elementAttr]="{ id: gridMethodId }" ophGridHeaderColor ophGridHeaderTextColor
+            (onContentReady)="onContentReady($event)" keyExpr="Id" [dataSource]="listMethod"
+            (onRowDblClick)="onRowMethodDblClick($event)" [allowColumnReordering]="true" [allowColumnResizing]="true"
+            [hoverStateEnabled]="true" [showColumnLines]="true" [showRowLines]="true" [showBorders]="true"
+            [columnAutoWidth]="false" [height]="'auto'">
+            <dxi-column caption="Codigo" dataField="MethodCode"></dxi-column>
+            <dxi-column caption="Descripción" dataField="MethodDesc"></dxi-column>
+        </dx-data-grid>
+        <dx-popup [elementAttr]="{ id: popUpMethodIntId }" ophTitleColor ophTitleTextColor ophPrimaryButtonColor
+            ophPrimaryButtonTextColor ophSecundaryButtonColor ophSecundaryButtonTextColor
+            (onContentReady)="onContentReady($event)" title="Homologación parametros" *ngIf="showPopupMethodInt"
+            [(visible)]="showPopupMethodInt" width="80%" [height]="popupHeightFuncInt" [showTitle]="true"
+            [dragEnabled]="true" [closeOnOutsideClick]="false" [toolbarItems]="toolbarItemsMethodIntPopup"
+            [showCloseButton]="true">
+            <ngb-tabset #tabsParams [destroyOnHide]="false">
+                <ngb-tab id="ParamsInTab" title="Parámetros entrada">
+                    <ng-template ngbTabContent>
+                        <dx-data-grid [elementAttr]="{ id: gridParamsInId }" ophGridHeaderColor
+                            ophGridHeaderTextColor (onContentReady)="onContentReady($event)" keyExpr="param"
+                            [dataSource]="listParamsIn" [allowColumnReordering]="false"
+                            [allowColumnResizing]="false" [hoverStateEnabled]="true" [showColumnLines]="true"
+                            [showRowLines]="true" [showBorders]="true" [columnAutoWidth]="false" [height]="'auto'">
+                            <dxo-editing [mode]="'cell'" [allowUpdating]="true"></dxo-editing>
+                            <dxi-column caption="Parámetro" dataField="param" [allowEditing]="false"></dxi-column>
+                            <dxi-column caption="Campo" dataField="field">
+                                <dxo-lookup [dataSource]="listFieldsSetFunction" valueExpr="value" displayExpr="text">
+                                </dxo-lookup>
+                            </dxi-column>                            
+                        </dx-data-grid>
+                    </ng-template>
+                </ngb-tab>
+                <ngb-tab id="ParamsOutTab" title="Parámetros salida">
+                    <ng-template ngbTabContent>
+                        <dx-data-grid [elementAttr]="{ id: gridParamsOutId }" ophGridHeaderColor
+                            ophGridHeaderTextColor (onContentReady)="onContentReady($event)" keyExpr="param"
+                            [dataSource]="listParamsOut" [allowColumnReordering]="false"
+                            [allowColumnResizing]="false" [hoverStateEnabled]="true" [showColumnLines]="true"
+                            [showRowLines]="true" [showBorders]="true" [columnAutoWidth]="false" [height]="'auto'">
+                            <dxo-editing [mode]="'cell'" [allowUpdating]="true"></dxo-editing>
+                            <dxi-column caption="Parámetro" dataField="param" [allowEditing]="false"></dxi-column>
+                            <dxi-column caption="Campo" dataField="field">
+                                <dxo-lookup [dataSource]="listFieldsSetFunction" valueExpr="value" displayExpr="text">
+                                </dxo-lookup>
+                            </dxi-column>                                                        
+                        </dx-data-grid>
+                    </ng-template>
+                </ngb-tab>
+            </ngb-tabset>
+        </dx-popup>
+    </div>
+</dx-popup>
